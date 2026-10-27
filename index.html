@@ -1,139 +1,1057 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SAI | Laboratorio de simulación vial</title><style>
-:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#e7efff;background:#091321}*{box-sizing:border-box}body{margin:0}.header{padding:25px clamp(18px,3vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(110deg,#122943,#101e33);border-bottom:1px solid #304158}.eyebrow{color:#5fe3c1;font-size:11px;font-weight:800;letter-spacing:2px}h1{font-size:clamp(23px,3vw,36px);margin:8px 0}h2{font-size:18px;margin:0 0 10px}h3{font-size:14px;color:#78d7e8;margin:22px 0 12px}p{line-height:1.5}.header p{color:#b0c3d9;margin:0}.badge{border:1px solid #a67842;border-radius:10px;color:#ffca81;padding:10px 12px;font-size:11px;font-weight:800;white-space:nowrap}.layout{display:grid;grid-template-columns:350px minmax(0,1fr);gap:20px;padding:22px;max-width:1700px;margin:auto}.panel{background:#142337;border:1px solid #2c405a;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 12px 35px #030b1640}.controls{align-self:start;position:sticky;top:15px;max-height:calc(100vh - 30px);overflow:auto}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}.controls label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#b9cae1}.controls input,.controls select{width:100%;background:#0c192b;color:#fff;border:1px solid #3c526d;border-radius:8px;padding:9px;font:inherit;font-size:14px}.controls input:focus,.controls select:focus{outline:2px solid #36bfc0}.controls .check{flex-direction:row;align-items:flex-start;margin-top:15px;line-height:1.5}.check input{width:auto;margin-top:3px}.tabs{display:flex;gap:5px;flex-wrap:wrap}.tabs button{font-size:11px;padding:7px}.btnrow{display:flex;gap:8px;margin-top:10px}.tiny,.muted,.note{color:#8da4bd;font-size:12px}.note{margin-top:13px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.sectionhead p{margin:0;color:#90a8c2;font-size:12px}.clock{font-size:23px;font-weight:800;font-variant-numeric:tabular-nums;color:#63e7c4}canvas{width:100%;height:auto;display:block;border-radius:10px;background:#0a1728}#scene{border:1px solid #354860}.statusline{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:15px 0;font-size:12px;color:#b5c9de}.signal{font-weight:800;margin-left:5px}.signal.green{color:#4de0a3}.signal.yellow{color:#ffd66d}.signal.red{color:#ff7883}.actions{display:flex;gap:8px;flex-wrap:wrap}button{cursor:pointer;border-radius:9px;background:#243b54;border:1px solid #3c5673;color:#e9f3ff;padding:10px 13px;font-weight:700}button:hover{filter:brightness(1.2)}button.primary{background:#09a99c;border-color:#0ed2bd;color:#051c20}.alert{margin-top:15px;padding:14px;background:#1a3446;border-left:4px solid #42d7c0;border-radius:7px;font-size:13px;line-height:1.5}.alert.warn{background:#42341d;border-color:#ffca63}.alert.danger{background:#4b232d;border-color:#ff637b}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}.metric{background:#142337;border:1px solid #2c405a;border-radius:13px;padding:15px;display:flex;flex-direction:column;gap:8px}.metric span{font-size:12px;color:#a7bad1}.metric strong{font-size:25px;font-variant-numeric:tabular-nums}.metric small{color:#8ba3bf}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;border-bottom:1px solid #30445c;padding:10px 9px;white-space:nowrap}th{color:#81d3d9;background:#1a3046}td{color:#d7e4f6}.eventtable{max-height:250px}.methodology{border-color:#665332}.methodology p{font-size:13px;color:#c1cfdd;margin:0}.controls::-webkit-scrollbar{width:7px}.controls::-webkit-scrollbar-thumb{background:#39516c;border-radius:9px}footer{text-align:center;color:#8296ad;font-size:12px;padding:25px}@media(max-width:1080px){.layout{grid-template-columns:1fr}.controls{position:static;max-height:none}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.header{flex-direction:column;align-items:flex-start}.layout{padding:10px;gap:10px}.panel{padding:13px}.cards{grid-template-columns:1fr 1fr}.metric strong{font-size:19px}.sectionhead{flex-wrap:wrap}}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAI · Simulador de intersección</title>
+<meta name="description" content="Simulador educativo de una intersección con semáforos y un sistema de alerta anticipada (SAI) para cruces en rojo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6fa;--surface:#ffffff;--surface-2:#f0f3f8;--border:#dfe5ee;--text:#0f1b2d;--text-2:#4b5b72;--text-3:#7a879a;
+  --accent:#0d9488;--accent-strong:#0f766e;--on-accent:#fff;--accent-soft:#ccfbf1;
+  --a:#e5484d;--a-soft:#fde8e8;--b:#2f7de1;--b-soft:#e3eefc;
+  --green:#18a957;--green-soft:#dcf5e7;--yellow:#e0a100;--yellow-soft:#fff3cf;--red:#e5484d;--red-soft:#fde8e8;
+  --shadow:0 1px 2px rgba(15,27,45,.06),0 8px 24px rgba(15,27,45,.06);--radius:16px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1220;--surface:#121b2c;--surface-2:#182337;--border:#26344b;--text:#e8eef8;--text-2:#a6b4c8;--text-3:#73839b;
+  --accent:#2dd4bf;--accent-strong:#5eead4;--on-accent:#04201d;--accent-soft:#123b3a;
+  --a:#ff6b6b;--a-soft:#3a1d24;--b:#5aa9ff;--b-soft:#172c49;
+  --green:#34d399;--green-soft:#123528;--yellow:#fbbf24;--yellow-soft:#3a2f12;--red:#ff6b6b;--red-soft:#3d1c22;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0b1220;--surface:#121b2c;--surface-2:#182337;--border:#26344b;--text:#e8eef8;--text-2:#a6b4c8;--text-3:#73839b;
+  --accent:#2dd4bf;--accent-strong:#5eead4;--on-accent:#04201d;--accent-soft:#123b3a;
+  --a:#ff6b6b;--a-soft:#3a1d24;--b:#5aa9ff;--b-soft:#172c49;
+  --green:#34d399;--green-soft:#123528;--yellow:#fbbf24;--yellow-soft:#3a2f12;--red:#ff6b6b;--red-soft:#3d1c22;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;line-height:1.25}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1440px;margin:0 auto;padding:0 20px}
 
-/* Selección independiente de vehículos */
-.vehicle-choice{display:block;margin:10px 0 14px;padding:12px 14px;border:1px solid #42627d;border-radius:12px;background:rgba(64,123,170,.13);font-weight:700}
-.vehicle-choice select{display:block;width:100%;margin-top:8px;font-size:1rem}
-.vehicle-choice small{display:block;margin-top:8px;color:#aebfd2;font-weight:400;line-height:1.35}
-#scene{width:100%;height:auto;border-radius:12px}
+/* Header */
+.top{background:var(--surface);border-bottom:1px solid var(--border)}
+.top .wrap{display:flex;align-items:center;gap:16px;padding-top:14px;padding-bottom:14px}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#2563eb);display:grid;place-items:center;flex:none}
+.brand h1{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.brand p{font-size:13px;color:var(--text-2)}
+.top .spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--yellow-soft);color:var(--text)}
+.ghost{border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+.ghost:hover{background:var(--surface-2)}
+.iconbtn{width:38px;height:38px;padding:0;justify-content:center}
 
-</style></head><body>
-<header class="header"><div><span class="eyebrow">PROYECTO SAI · LABORATORIO EXPERIMENTAL</span><h1>Simulador de intersección inteligente</h1><p>Estudio de velocidades, frenado, tiempos semafóricos y advertencia anticipada · modelo educativo</p></div><span class="badge">SIMULACIÓN · NO APTO PARA CONTROL REAL</span></header>
-<main class="layout"><aside class="panel controls"><h2>Configuración del escenario</h2><div class="tabs"><button id="presetSafe" type="button">Cruce normal</button><button id="presetRisk" type="button">Posible cruce en rojo</button><button id="presetBrake" type="button">Frenado tardío</button></div>
-<h3>Semáforos</h3><div class="grid2"><label>Verde ruta (s)<input id="routeGreen" type="number" min="2" max="180" step="1" value="18"></label><label>Amarillo ruta (s)<input id="routeYellow" type="number" min="1" max="15" step="0.5" value="4"></label><label>Verde cruce (s)<input id="crossGreen" type="number" min="2" max="180" step="1" value="14"></label><label>Amarillo cruce (s)<input id="crossYellow" type="number" min="1" max="15" step="0.5" value="3"></label><label>Rojo total (s)<input id="allRed" type="number" min="0" max="15" step="0.5" value="2"></label><label>Inicio de ciclo<select id="phaseStart"><option value="routeGreen">Ruta en verde</option><option value="crossGreen">Cruce en verde</option></select></label></div>
-<h3>Vehículo en ruta <span class="tiny">horizontal →</span></h3><label class="vehicle-choice">Tipo de vehículo · ruta<select id="routeType"><option value="auto">🚗 Auto</option><option value="moto">🏍️ Moto</option><option value="camion">🚚 Camión</option><option value="omnibus">🚌 Ómnibus</option></select><small>Representación animada en la intersección; el tipo no modifica automáticamente el frenado.</small></label><div class="grid2"><label>Velocidad (km/h)<input id="routeSpeed" type="number" min="0" max="160" step="1" value="70"></label><label>Distancia inicial (m)<input id="routeDistance" type="number" min="5" max="400" step="1" value="110"></label><label>Frenado (m/s²)<input id="routeBrake" type="number" min="0.5" max="12" step="0.1" value="5"></label><label>Reacción (s)<input id="routeReaction" type="number" min="0" max="5" step="0.1" value="1.2"></label></div><div class="btnrow"><button id="routeBrakeNow" type="button" class="secondary">Frenar ruta</button><button id="routeRelease" type="button" class="secondary">Soltar freno</button></div>
-<h3>Vehículo que cruza <span class="tiny">vertical ↑</span></h3><label class="vehicle-choice">Tipo de vehículo · cruce<select id="crossType"><option value="auto">🚗 Auto</option><option value="moto">🏍️ Moto</option><option value="camion">🚚 Camión</option><option value="omnibus">🚌 Ómnibus</option></select><small>Representación animada en la intersección; el tipo no modifica automáticamente el frenado.</small></label><div class="grid2"><label>Velocidad (km/h)<input id="crossSpeed" type="number" min="0" max="160" step="1" value="45"></label><label>Distancia inicial (m)<input id="crossDistance" type="number" min="5" max="400" step="1" value="90"></label><label>Frenado (m/s²)<input id="crossBrake" type="number" min="0.5" max="12" step="0.1" value="5"></label><label>Reacción (s)<input id="crossReaction" type="number" min="0" max="5" step="0.1" value="1"></label></div><div class="btnrow"><button id="crossBrakeNow" type="button" class="secondary">Frenar cruce</button><button id="crossRelease" type="button" class="secondary">Soltar freno</button></div>
-<h3>Detección y estudio</h3><div class="grid2"><label>Cámara a (m)<input id="detectDistance" type="number" min="5" max="300" step="1" value="80"></label><label>Retardo SAI (s)<input id="systemDelay" type="number" min="0" max="5" step="0.1" value="0.3"></label><label>Umbral advertencia (s)<input id="warningWindow" type="number" min="0.5" max="12" step="0.5" value="5"></label><label>Velocidad simulación<select id="timeScale"><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="5">5×</option></select></label></div><h3>Respuesta a la advertencia SAI</h3><div class="grid2"><label>Anticipación máxima de alerta (s)<input id="warningWindowLive" type="range" min="0.5" max="15" step="0.5" value="5"><output id="warningWindowValue">5,0 s</output></label><label>Reacción a alarma: ruta (s)<input id="alertReactionRoute" type="number" min="0" max="8" step="0.1" value="1.2"></label><label>Reacción a alarma: cruce (s)<input id="alertReactionCross" type="number" min="0" max="8" step="0.1" value="1.5"></label><label>Respuesta al SAI<select id="saiResponse"><option value="off">Solo advertir (sin reacción)</option><option value="green" selected>Frena vehículo con verde</option></select></label></div><p class="note">La anticipación indica cuánto antes del posible cruce se permite generar la alerta; no garantiza que haya tiempo suficiente. Los tiempos de reacción a la alarma se regulan independientemente de la reacción ante el semáforo.</p><label class="check"><input type="checkbox" id="autoBrake" checked> Conductores intentan detenerse ante rojo/amarillo</label><p class="note">Podés modificar velocidades y frenadas durante la ejecución. Los cambios de distancia inicial y semáforos se aplican al reiniciar.</p></aside>
-<section class="workspace"><div class="panel simulation"><div class="sectionhead"><div><h2>Intersección en tiempo real</h2><p>Ruta principal ↔ calle secundaria · vehículos reducidos y señal luminosa ⚠ de precaución</p></div><div class="clock" id="clock">00:00.0</div></div><canvas id="scene" width="1000" height="520" aria-label="Simulación visual de intersección con dos vehículos"></canvas><div class="statusline"><div>RUTA <span class="signal" id="routeSignal">VERDE</span></div><div>CRUCE <span class="signal" id="crossSignal">ROJO</span></div><div>Fase restante <strong id="phaseRemaining">—</strong></div></div><div class="actions"><button id="play" class="primary">▶ Iniciar</button><button id="pause">Ⅱ Pausar</button><button id="step">+ 0,1 s</button><button id="reset">↺ Reiniciar</button><button id="export">↓ Exportar CSV</button></div><div class="alert" id="alertBox" role="status">Sistema en espera. Configurá el escenario e iniciá la simulación.</div></div>
-<div class="cards"><article class="metric"><span>Alerta emitida en</span><strong id="alertIssued">—</strong><small>Tiempo de simulación</small></article><article class="metric"><span>Reacción ante alerta</span><strong id="alertReactionStatus">—</strong><small>Espera y frenado simulado</small></article><article class="metric"><span>Margen de aviso</span><strong id="alertLead">—</strong><small>Hasta línea del vehículo en riesgo</small></article><article class="metric"><span>Ruta · velocidad</span><strong id="routeCurrent">—</strong><small id="routePosition">—</small></article><article class="metric"><span>Cruce · velocidad</span><strong id="crossCurrent">—</strong><small id="crossPosition">—</small></article><article class="metric"><span>Distancia de detención ruta</span><strong id="routeStopping">—</strong><small>Reacción + frenado</small></article><article class="metric"><span>Distancia de detención cruce</span><strong id="crossStopping">—</strong><small>Reacción + frenado</small></article><article class="metric"><span>Tiempo hasta línea · ruta</span><strong id="routeETA">—</strong><small>Si conserva velocidad actual</small></article><article class="metric"><span>Tiempo hasta línea · cruce</span><strong id="crossETA">—</strong><small>Si conserva velocidad actual</small></article></div>
-<div class="panel"><div class="sectionhead"><h2>Gráfico de velocidades</h2><span class="muted">km/h frente al tiempo · ruta y cruce</span></div><canvas id="chart" width="1000" height="250"></canvas></div>
-<div class="panel"><div class="sectionhead"><h2>Tabla de velocidad y respuesta de frenado</h2><span class="muted">Distancias teóricas · condiciones configuradas</span></div><div class="tablewrap"><table><thead><tr><th>Velocidad</th><th>Reacción ruta</th><th>Frenado ruta</th><th>Total ruta</th><th>Reacción cruce</th><th>Frenado cruce</th><th>Total cruce</th></tr></thead><tbody id="brakeTable"></tbody></table></div></div>
-<div class="panel"><div class="sectionhead"><h2>Registro de observaciones</h2><span class="muted" id="eventCount">0 eventos</span></div><div class="tablewrap eventtable"><table><thead><tr><th>Tiempo</th><th>Tipo</th><th>Detalle</th></tr></thead><tbody id="eventTable"></tbody></table></div></div>
-<div class="panel methodology"><h2>Alcance y límites del modelo</h2><p>Modelo cinemático simplificado: cada vehículo avanza en línea recta; la velocidad se actualiza por pasos de 0,1 s. Distancia de frenado <strong>v²/(2a)</strong>; distancia de reacción <strong>v·t</strong>. Los valores de desaceleración y reacción son hipótesis ajustables, no mediciones reales. El amarillo no garantiza que sea seguro detenerse: depende de velocidad, distancia y condiciones. La reacción a la alarma se modela como una demora regulable seguida de frenado del vehículo con luz verde; no representa comportamiento humano validado. El detector simula una cámara ideal, sin errores de visión. Una alerta indica un <em>riesgo calculado</em>, no una infracción confirmada. La proximidad simultánea en la zona central es un indicador simplificado de conflicto, no una reconstrucción de choques. No usar para decidir tiempos semafóricos reales ni para operar alarmas en vía pública sin validación y autorización.</p></div>
-</section></main><footer>Proyecto SAI · Simulador educativo experimental · Alejandro Ledesma</footer><script>
+/* Steps */
+.steps{display:flex;gap:10px;margin:20px 0 12px;flex-wrap:wrap;align-items:center}
+.step{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-2)}
+.step b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-size:12px;flex:none}
+.step + .step::before{content:"";width:22px;height:2px;background:var(--border);margin-right:2px}
+
+/* Scenario cards */
+.scenarios{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.scenario{text-align:left;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 14px 13px;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,transform .15s,box-shadow .15s}
+.scenario:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow)}
+.scenario[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.scenario .emo{font-size:24px;line-height:1}
+.scenario strong{display:block;font-size:15px}
+.scenario span{display:block;font-size:13px;color:var(--text-2);margin-top:2px}
+.custom-note{font-size:13px;color:var(--text-3);margin-top:8px;min-height:20px}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;margin-top:8px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stage{overflow:hidden}
+.stagebar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.clock{font-variant-numeric:tabular-nums;font-weight:800;font-size:22px;min-width:84px}
+.clock small{display:block;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.lights{display:flex;gap:8px;flex-wrap:wrap}
+.lightchip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px 6px 8px;border-radius:999px;background:var(--surface-2);font-size:13px;font-weight:600}
+.lightchip i{width:12px;height:12px;border-radius:50%;background:var(--text-3);box-shadow:0 0 0 3px color-mix(in srgb,currentColor 0%,transparent)}
+.lightchip.VERDE i{background:var(--green)}.lightchip.AMARILLO i{background:var(--yellow)}.lightchip.ROJO i{background:var(--red)}
+.lightchip em{font-style:normal;color:var(--text-3);font-weight:500}
+.phase{font-size:13px;color:var(--text-2)}
+.phase strong{font-variant-numeric:tabular-nums;color:var(--text)}
+.stagebar .spacer{flex:1}
+.canvaswrap{position:relative;background:#16302a}
+#scene{display:block;width:100%;height:auto;aspect-ratio:1000/640}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:rgba(6,14,24,.35);transition:opacity .2s;cursor:pointer;border:0;width:100%}
+.overlay[hidden]{display:none}
+.overlay span{display:flex;align-items:center;gap:10px;background:#fff;color:#0f1b2d;padding:14px 22px;border-radius:999px;font-weight:700;font-size:16px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.controlsbar{display:flex;align-items:center;gap:10px;padding:12px 16px;flex-wrap:wrap;border-top:1px solid var(--border)}
+.play{background:var(--accent);color:var(--on-accent);border:0;border-radius:12px;padding:11px 20px;font-weight:700;font-size:15px;display:inline-flex;gap:8px;align-items:center;min-width:150px;justify-content:center}
+.play:hover{background:var(--accent-strong)}
+
+.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2);cursor:pointer;user-select:none}
+.toggle input{appearance:none;width:34px;height:20px;border-radius:999px;background:var(--border);position:relative;margin:0;cursor:pointer;transition:background .15s;flex:none}
+.toggle input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle input:checked{background:var(--accent)}
+.toggle input:checked::after{transform:translateX(14px)}
+.kbd{font-size:12px;color:var(--text-3)}
+kbd{font:600 11px Inter,system-ui,sans-serif;background:var(--surface-2);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 5px}
+
+/* Narrator */
+.narrator{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-top:1px solid var(--border);background:var(--surface-2)}
+.narrator .ico{font-size:20px;line-height:1.2}
+.narrator strong{display:block;font-size:14px}
+.narrator p{font-size:14px;color:var(--text-2)}
+.narrator.warn{background:var(--yellow-soft)}
+.narrator.danger{background:var(--red-soft)}
+.narrator.ok{background:var(--green-soft)}
+
+/* Live status */
+.status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.veh{padding:16px}
+.vehhead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tag{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex:none}
+.tag.A{background:var(--a)}.tag.B{background:var(--b)}.tag.S{background:var(--yellow);color:#2a1d00}
+.vehhead h3{font-size:15px}
+.vehhead p{font-size:12px;color:var(--text-3)}
+.vehhead .lightchip{margin-left:auto}
+.big{display:flex;align-items:baseline;gap:6px}
+.big strong{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big span{color:var(--text-3);font-size:14px}
+.state{font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px;min-height:20px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:10px}
+.kv div{background:var(--surface-2);border-radius:10px;padding:8px 10px}
+.kv dt{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.kv dd{margin:2px 0 0;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px}
+.meter{margin-top:12px}
+.meter .lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2);margin-bottom:5px;gap:8px}
+.meter .lbl b{font-weight:700}
+.bar{position:relative;height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--green);transition:width .1s}
+.bar.bad i{background:var(--red)}
+.verdict{font-size:12px;font-weight:700;margin-top:6px}
+.verdict.good{color:var(--green)}.verdict.bad{color:var(--red)}.verdict.neutral{color:var(--text-3)}
+.vehactions{display:flex;gap:8px;margin-top:12px}
+.vehactions button{flex:1;padding:8px;font-size:13px}
+.saistate{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:20px;margin:4px 0 6px}
+.saistate i{width:12px;height:12px;border-radius:50%;background:var(--text-3)}
+.saistate.idle i{background:var(--green)}.saistate.pending i{background:var(--yellow)}.saistate.alert i{background:var(--red);animation:blink .6s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.saistate.alert i{animation:none}}
+
+/* Result */
+.result{margin-top:16px;padding:18px 20px;border-left:6px solid var(--green)}
+.result[hidden]{display:none}
+.result.warn{border-left-color:var(--yellow)}.result.danger{border-left-color:var(--red)}
+.result h2{font-size:19px;display:flex;gap:10px;align-items:center}
+.result ul{margin:10px 0 14px;padding-left:20px;color:var(--text-2)}
+.result li{margin:4px 0}
+.result .row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:14px;background:var(--accent);color:var(--on-accent)}
+
+/* Params */
+.params{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;padding:6px 0}
+.params > header{padding:12px 18px 6px}
+.params > header h2{font-size:16px}
+.params > header p{font-size:13px;color:var(--text-3)}
+details.group{border-top:1px solid var(--border)}
+details.group:first-of-type{border-top:0}
+details.group summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+details.group summary::-webkit-details-marker{display:none}
+details.group summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--text-3);border-bottom:2px solid var(--text-3);transform:rotate(45deg);transition:transform .15s}
+details.group[open] summary::after{transform:rotate(-135deg)}
+details.group summary .tag{width:24px;height:24px;font-size:12px;border-radius:7px}
+.gbody{padding:0 18px 16px;display:flex;flex-direction:column;gap:16px}
+.field label,.field .flabel{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;font-weight:600}
+.field output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);background:var(--surface-2);padding:1px 8px;border-radius:6px;font-size:13px;white-space:nowrap}
+.field small{display:block;font-size:12px;color:var(--text-3);margin-top:4px;line-height:1.4}
+.field .restart{font-size:11px;font-weight:600;color:var(--text-3);margin-left:4px}
+input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--accent);height:22px;cursor:pointer}
+select{width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:14px}
+.typegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.typegrid button{border:1.5px solid var(--border);background:var(--surface);border-radius:10px;padding:8px 2px 6px;font-size:20px;line-height:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.typegrid button span{font-size:11px;font-weight:600;color:var(--text-2)}
+.typegrid button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.params .foot{padding:12px 18px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+.params .foot button{flex:1}
+
+/* Data tabs */
+.data{margin:20px 0 10px}
+.tabs{display:flex;gap:4px;padding:8px 8px 0;border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.tabs button{border:0;background:transparent;padding:10px 14px;font-weight:600;font-size:14px;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;border-radius:8px 8px 0 0}
+.tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--accent)}
+.tabpanel{padding:18px}
+.tabpanel[hidden]{display:none}
+.tabpanel .lead{font-size:14px;color:var(--text-2);margin-bottom:12px;max-width:820px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--text-2);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+#chart{display:block;width:100%;height:280px}
+.tablewrap{overflow:auto;max-height:380px;border:1px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{position:sticky;top:0;background:var(--surface-2);font-size:12px;color:var(--text-2);font-weight:700}
+td{font-variant-numeric:tabular-nums}
+td.wrap{white-space:normal;min-width:260px}
+tr.hl td{background:var(--accent-soft)}
+.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--surface-2);color:var(--text-2)}
+.chip.danger{background:var(--red-soft);color:var(--red)}.chip.warn{background:var(--yellow-soft);color:var(--text)}.chip.ok{background:var(--green-soft);color:var(--green)}.chip.light{background:var(--b-soft);color:var(--b)}
+.empty{color:var(--text-3);font-size:14px;padding:18px;text-align:center}
+.model{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.model div{background:var(--surface-2);border-radius:12px;padding:14px}
+.model h3{font-size:14px;margin-bottom:6px}
+.model p{font-size:14px;color:var(--text-2)}
+.formula{font-family:ui-monospace,Consolas,monospace;background:var(--surface);padding:1px 6px;border-radius:6px;color:var(--text)}
+
+footer{color:var(--text-3);font-size:13px;text-align:center;padding:24px 0 36px}
+
+/* Dialog */
+dialog{border:0;border-radius:18px;padding:0;max-width:620px;width:calc(100% - 32px);background:var(--surface);color:var(--text);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(6,12,22,.55)}
+.dlg{padding:24px}
+.dlg h2{font-size:20px;margin-bottom:6px}
+.dlg > p{color:var(--text-2);font-size:14px}
+.dlg ol{padding-left:0;list-style:none;margin:16px 0;display:flex;flex-direction:column;gap:12px}
+.dlg li{display:flex;gap:12px;font-size:14px;color:var(--text-2)}
+.dlg li b{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:13px;flex:none}
+.dlg li strong{color:var(--text)}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;background:var(--surface-2);padding:14px;border-radius:12px;margin-bottom:16px}
+.gloss dt{font-weight:700}.gloss dd{margin:0;color:var(--text-2)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0f1b2d;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:calc(100% - 32px);text-align:center;z-index:10}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+@media (max-width:1180px){.scenarios{grid-template-columns:repeat(2,minmax(0,1fr))}.status{grid-template-columns:1fr 1fr}.status .sai{grid-column:1/-1}}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}.params{position:static;max-height:none}}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .top .pill,.top .label{display:none}
+  .brand p{display:none}
+  .scenarios{grid-template-columns:1fr}
+  .scenario{padding:12px}
+  .status{grid-template-columns:1fr}
+  .stagebar{padding:10px 12px}.controlsbar{padding:10px 12px}
+  .clock{font-size:19px;min-width:0}
+  .kbd{display:none}
+  .play{flex:1}
+  .model{grid-template-columns:1fr}
+  .step + .step::before{display:none}
+  .tabpanel{padding:14px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="logo" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="8" y="2" width="8" height="20" rx="3" fill="#fff" opacity=".95"/><circle cx="12" cy="7" r="2" fill="#e5484d"/><circle cx="12" cy="12" r="2" fill="#e0a100"/><circle cx="12" cy="17" r="2" fill="#18a957"/></svg>
+    </div>
+    <div class="brand">
+      <h1>Simulador SAI de intersección</h1>
+      <p>¿Puede un aviso anticipado evitar un choque por cruce en rojo?</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="pill" title="Modelo simplificado con fines didácticos">🎓 Modelo educativo</span>
+    <button class="ghost" id="helpBtn" type="button"><span aria-hidden="true">?</span><span class="label">Cómo se usa</span></button>
+    <button class="ghost iconbtn" id="themeBtn" type="button" aria-label="Cambiar tema claro/oscuro">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="steps" aria-label="Pasos">
+    <div class="step"><b>1</b>Elegí un escenario</div>
+    <div class="step"><b>2</b>Tocá Reproducir</div>
+    <div class="step"><b>3</b>Mirá qué pasó y cambiá los valores</div>
+  </div>
+
+  <section class="scenarios" id="scenarios" aria-label="Escenarios"></section>
+  <p class="custom-note" id="customNote" aria-live="polite"></p>
+
+  <div class="layout">
+    <section>
+      <div class="card stage">
+        <div class="stagebar">
+          <div class="clock" aria-label="Tiempo de simulación"><small>Tiempo</small><span id="clock">0,0 s</span></div>
+          <div class="lights">
+            <span class="lightchip" id="chipA"><i></i>A · Ruta <em>VERDE</em></span>
+            <span class="lightchip" id="chipB"><i></i>B · Calle <em>ROJO</em></span>
+          </div>
+          <div class="spacer"></div>
+          <div class="phase">Cambia en <strong id="phaseLeft">—</strong></div>
+        </div>
+        <div class="canvaswrap">
+          <canvas id="scene" aria-label="Vista aérea de la intersección con dos vehículos" role="img"></canvas>
+          <button class="overlay" id="overlay" type="button" aria-label="Reproducir simulación"><span>▶ Reproducir simulación</span></button>
+        </div>
+        <div class="controlsbar">
+          <button class="play" id="play" type="button">▶ Reproducir</button>
+          <button class="ghost" id="step" type="button" title="Avanzar 0,1 segundos">⏭ Paso</button>
+          <button class="ghost" id="reset" type="button" title="Volver al inicio">↺ Reiniciar</button>
+          <div class="seg" role="group" aria-label="Velocidad de reproducción" id="speedSeg">
+            <button type="button" data-v="0.25">¼×</button><button type="button" data-v="0.5">½×</button><button type="button" data-v="1" aria-pressed="true">1×</button><button type="button" data-v="2">2×</button><button type="button" data-v="4">4×</button>
+          </div>
+          <label class="toggle"><input type="checkbox" id="showStop" checked> Mostrar dónde frenaría</label>
+          <span class="spacer" style="flex:1"></span>
+          <span class="kbd"><kbd>Espacio</kbd> reproducir · <kbd>→</kbd> paso · <kbd>R</kbd> reiniciar</span>
+        </div>
+        <div class="narrator" id="narrator" role="status" aria-live="polite">
+          <div class="ico" id="narrIco">💡</div>
+          <div><strong id="narrTitle">Listo para empezar</strong><p id="narrText">Elegí un escenario y tocá Reproducir.</p></div>
+        </div>
+      </div>
+
+      <div class="status">
+        <article class="card veh" id="cardA"></article>
+        <article class="card veh" id="cardB"></article>
+        <article class="card veh sai">
+          <div class="vehhead"><span class="tag S">⚠</span><div><h3>Sistema SAI</h3><p>Cámara + aviso luminoso</p></div></div>
+          <div class="saistate idle" id="saiState"><i></i><span>Vigilando</span></div>
+          <p class="state" id="saiText">No hay riesgo detectado.</p>
+          <dl class="kv">
+            <div><dt>Alerta emitida</dt><dd id="saiAt">—</dd></div>
+            <div><dt>Aviso anticipado</dt><dd id="saiLead">—</dd></div>
+            <div><dt>Respuesta del otro</dt><dd id="saiResp">—</dd></div>
+            <div><dt>Choque posible</dt><dd id="saiConflict">No</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <article class="card result" id="result" hidden aria-live="polite">
+        <h2 id="resTitle"></h2>
+        <ul id="resList"></ul>
+        <div class="row">
+          <button class="btn" id="resAgain" type="button">↺ Ver de nuevo</button>
+          <button class="ghost" id="resNext" type="button">Siguiente escenario →</button>
+        </div>
+      </article>
+    </section>
+
+    <aside class="card params" id="params" aria-label="Parámetros">
+      <header><h2>Ajustá los valores</h2><p>Los cambios se ven al instante. Los marcados con ↺ reinician el escenario.</p></header>
+      <div id="groups"></div>
+      <div class="foot">
+        <button class="ghost" id="exportBtn" type="button">⬇ Exportar CSV</button>
+        <button class="ghost" id="restoreBtn" type="button">Restablecer</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card data" aria-label="Datos y explicación">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" aria-controls="tab-chart" id="t-chart">📈 Velocidad en el tiempo</button>
+      <button role="tab" aria-selected="false" aria-controls="tab-log" id="t-log">📝 Qué pasó, paso a paso <span class="chip" id="logCount">0</span></button>
+      <button role="tab" aria-selected="false" aria-controls="tab-table" id="t-table">🛑 Distancias de frenado</button>
+      <button role="tab" aria-selected="false" aria-controls="tab-model" id="t-model">ℹ️ Cómo funciona</button>
+    </div>
+    <div class="tabpanel" id="tab-chart" role="tabpanel">
+      <p class="lead">Cada línea muestra la velocidad de un vehículo. Cuando baja, está frenando. Las franjas de abajo muestran el color del semáforo de cada uno en ese momento.</p>
+      <div class="legend"><span><i style="background:var(--a)"></i>A · Ruta</span><span><i style="background:var(--b)"></i>B · Calle</span><span><i style="background:var(--yellow)"></i>Alerta SAI</span><span><i style="background:var(--red)"></i>Posible choque</span></div>
+      <canvas id="chart" aria-label="Gráfico de velocidad en función del tiempo" role="img"></canvas>
+    </div>
+    <div class="tabpanel" id="tab-log" role="tabpanel" hidden>
+      <p class="lead">Todo lo que ocurrió en la simulación, del más reciente al más antiguo.</p>
+      <div class="tablewrap"><table><thead><tr><th>Tiempo</th><th>Tipo</th><th>Qué pasó</th></tr></thead><tbody id="logBody"></tbody></table></div>
+    </div>
+    <div class="tabpanel" id="tab-table" role="tabpanel" hidden>
+      <p class="lead">Cuántos metros necesita cada vehículo para detenerse según su velocidad, con los valores de reacción y frenado que configuraste. La fila resaltada es la velocidad más cercana a la actual de A.</p>
+      <div class="tablewrap"><table><thead><tr><th>Velocidad</th><th>A · reacción</th><th>A · frenado</th><th>A · total</th><th>B · reacción</th><th>B · frenado</th><th>B · total</th></tr></thead><tbody id="brakeBody"></tbody></table></div>
+    </div>
+    <div class="tabpanel" id="tab-model" role="tabpanel" hidden>
+      <div class="model">
+        <div><h3>🚗 Cómo se mueven los vehículos</h3><p>Avanzan en línea recta. Cuando el conductor decide frenar, primero pasa su <b>tiempo de reacción</b> (sigue a la misma velocidad) y después desacelera con la <b>fuerza de frenado</b> elegida.</p></div>
+        <div><h3>📏 Distancia para detenerse</h3><p>Distancia total = reacción + frenado = <span class="formula">v·t</span> + <span class="formula">v²/(2a)</span>. Si es mayor que la distancia a la línea, el vehículo no llega a frenar a tiempo.</p></div>
+        <div><h3>📷 Qué hace el SAI</h3><p>Una cámara detecta al vehículo. Si tiene luz roja, va a llegar a la línea dentro del tiempo de anticipación y ya no puede frenar, el SAI enciende el aviso ⚠ para el otro conductor, que tiene luz verde.</p></div>
+        <div><h3>💥 Qué se considera “choque posible”</h3><p>Que los dos vehículos estén dentro del cuadrado central de la intersección al mismo tiempo. Es un indicador simplificado, no una reconstrucción de un choque real.</p></div>
+        <div><h3>🟡 Semáforos y conductores</h3><p>Con amarillo, si el conductor puede frenar, frena; si no, sigue. Con rojo intenta frenar. Al volver el verde, arranca de nuevo. Podés desactivar este comportamiento para simular un conductor distraído.</p></div>
+        <div><h3>⚠️ Límites</h3><p>Valores hipotéticos y ajustables, cámara ideal sin errores, vista no a escala. Sirve para aprender y comparar, <b>no</b> para definir tiempos semafóricos reales ni operar alarmas en la vía pública.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Proyecto SAI · Simulador educativo experimental · Alejandro Ledesma</footer>
+
+<dialog id="help">
+  <div class="dlg">
+    <h2>¿Cómo se usa?</h2>
+    <p>Dos vehículos se acercan a una esquina con semáforos. El <b>SAI</b> (Sistema de Alerta Anticipada) vigila con una cámara y avisa cuando alguien se va a pasar en rojo.</p>
+    <ol>
+      <li><b>1</b><div><strong>Elegí un escenario.</strong> Cada tarjeta prepara una situación distinta, lista para mirar.</div></li>
+      <li><b>2</b><div><strong>Tocá Reproducir.</strong> Mirá cómo se mueven el vehículo <span style="color:var(--a);font-weight:700">A</span> (ruta) y el <span style="color:var(--b);font-weight:700">B</span> (calle). La franja delante de cada uno muestra dónde se detendría si frenara ahora: <span style="color:var(--green);font-weight:700">verde</span> = llega a frenar, <span style="color:var(--red);font-weight:700">roja</span> = no llega.</div></li>
+      <li><b>3</b><div><strong>Leé el resultado y experimentá.</strong> Cambiá la velocidad, la distancia o los semáforos a la derecha y compará.</div></li>
+    </ol>
+    <dl class="gloss">
+      <dt>Reacción</dt><dd>Segundos que tarda el conductor en empezar a frenar.</dd>
+      <dt>Frenado (m/s²)</dt><dd>Cuánta velocidad pierde por segundo. Más alto = frena más fuerte.</dd>
+      <dt>Aviso anticipado</dt><dd>Segundos entre la alerta del SAI y la llegada del infractor a la línea.</dd>
+      <dt>Rojo total</dt><dd>Segundos en que ambos semáforos están en rojo para despejar la esquina.</dd>
+    </dl>
+    <form method="dialog" style="display:flex;justify-content:flex-end"><button class="btn">Entendido</button></form>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
 'use strict';
 // SAI: simulador educativo determinista. No controla dispositivos físicos.
-const $=id=>document.getElementById(id), num=id=>Number($(id).value), set=(id,value)=>{$(id).value=value};
-const scene=$('scene'),ctx=scene.getContext('2d'),chart=$('chart'),g=chart.getContext('2d');
-const DT=0.1;let timer=null,state=null,events=[],history=[],lastWarning=false,halfStep=false;
-const fmt=(x,d=1)=>Number.isFinite(x)?x.toFixed(d):'—';
-function stopDistance(kmh,reaction,decel){let v=kmh/3.6;return v*reaction+v*v/(2*Math.max(.1,decel));}
-function readConfig(){return {routeGreen:num('routeGreen'),routeYellow:num('routeYellow'),crossGreen:num('crossGreen'),crossYellow:num('crossYellow'),allRed:num('allRed'),detectDistance:num('detectDistance'),systemDelay:num('systemDelay'),warningWindow:num('warningWindowLive'),autoBrake:$('autoBrake').checked,phaseStart:$('phaseStart').value};}
-function phases(c){let arr=[['routeGreen',c.routeGreen],['routeYellow',c.routeYellow],['allRed1',c.allRed],['crossGreen',c.crossGreen],['crossYellow',c.crossYellow],['allRed2',c.allRed]];let i=arr.findIndex(a=>a[0]===c.phaseStart);return [...arr.slice(i),...arr.slice(0,i)];}
-function signal(phase,which){if(phase===which+'Green')return 'VERDE';if(phase===which+'Yellow')return 'AMARILLO';return 'ROJO';}
-function newCar(prefix){return {prefix,x:num(prefix+'Distance'),v:num(prefix+'Speed')/3.6,brake:num(prefix+'Brake'),reaction:num(prefix+'Reaction'),type:$(prefix+'Type').value,braking:false,brakeAt:null,detected:num(prefix+'Distance')<=num('detectDistance'),crossed:false,redCross:false,stopReported:false,zoneExit:false};}
-function log(type,detail){events.unshift({time:state?state.t:0,type,detail});if(events.length>5000)events.pop();renderEvents();}
-function reset(){pause();state={t:0,c:readConfig(),phaseIdx:0,phaseElapsed:0,route:newCar('route'),cross:newCar('cross'),warningPending:null,warningActive:false,alertIssuedAt:null,alertLead:null,responsePending:null,responseStartedAt:null,conflictLogged:false};state.p=phases(state.c);events=[];history=[];lastWarning=false,halfStep=false;log('Inicio','Escenario reiniciado; parámetros iniciales aplicados.');render();}
-function pause(){if(timer!==null){clearInterval(timer);timer=null;}}
-function play(){if(!state)reset();if(timer!==null)return;timer=setInterval(()=>{let speed=num('timeScale');if(speed===0.5){halfStep=!halfStep;if(halfStep)tick(DT);}else{for(let i=0;i<speed;i++)tick(DT);}render();},100);}
-function requestBrake(car){if(!car.braking && car.brakeAt===null){car.brakeAt=state.t+car.reaction;log('Frenado',`${car.prefix==='route'?'Ruta':'Cruce'}: orden de frenado; reacción ${fmt(car.reaction)} s.`);}}
-function manualBrake(prefix){if(!state)return;let car=state[prefix];car.brakeAt=state.t;car.braking=true;log('Frenado manual',`${prefix==='route'?'Ruta':'Cruce'}: frenado inmediato aplicado.`);render();}
-function release(prefix){if(!state)return;state[prefix].braking=false;state[prefix].brakeAt=null;log('Control',`Freno liberado: ${prefix==='route'?'ruta':'cruce'}.`);render();}
-function tick(dt){let s=state,c=s.c;s.t+=dt;s.phaseElapsed+=dt;let ph=s.p[s.phaseIdx];if(s.phaseElapsed>=ph[1]-1e-9){s.phaseElapsed=Math.max(0,s.phaseElapsed-ph[1]);s.phaseIdx=(s.phaseIdx+1)%s.p.length;ph=s.p[s.phaseIdx];log('Semáforo',`Fase: ${ph[0]}.`);}let phase=ph[0];
-for(let prefix of ['route','cross']){let car=s[prefix],sig=signal(phase,prefix);car.brake=num(prefix+'Brake');car.reaction=num(prefix+'Reaction');
-// Cambios manuales de velocidad se aplican inmediatamente si el usuario edita el campo.
-if(c.autoBrake && car.x>0 && car.v>0 && (sig==='ROJO'||sig==='AMARILLO') && car.brakeAt===null && !car.braking){let d=stopDistance(car.v*3.6,car.reaction,car.brake);if(car.x<=d+3)requestBrake(car);}
-if(car.brakeAt!==null && s.t>=car.brakeAt-1e-8){car.braking=true;car.brakeAt=null;}
-let oldX=car.x;if(car.braking)car.v=Math.max(0,car.v-car.brake*dt);car.x-=car.v*dt;
-if(!car.detected && oldX>c.detectDistance && car.x<=c.detectDistance){car.detected=true;log('Cámara',`${prefix==='route'?'Ruta':'Cruce'} detectado a ${fmt(car.x)} m, ${fmt(car.v*3.6)} km/h.`);}
-if(!car.crossed && oldX>0 && car.x<=0){car.crossed=true;car.redCross=sig==='ROJO';log(car.redCross?'Cruce en rojo':'Cruce',`${prefix==='route'?'Ruta':'Cruce'} pasa línea con ${sig.toLowerCase()} a ${fmt(car.v*3.6)} km/h.`);}
-if(!car.stopReported && car.v<=.02 && car.x>0){car.stopReported=true;log('Detención',`${prefix==='route'?'Ruta':'Cruce'} se detiene a ${fmt(car.x)} m de la línea.`);}
-}
-// Advertencia experimental: solo con rojo, vehículo detectado, velocidad > 0 y
-// distancia de detención superior a distancia restante. No representa IA real.
-let risk=[];for(let prefix of ['route','cross']){let car=s[prefix],sig=signal(phase,prefix);let eta=car.v>.1?car.x/car.v:Infinity;let margin=stopDistance(car.v*3.6,car.reaction,car.brake)-car.x;
-if(car.detected && !car.crossed && car.x>0 && sig==='ROJO' && car.v>.5 && eta<=c.warningWindow && margin>0)risk.push({prefix,eta,margin});}
-if(risk.length && s.warningPending===null && !s.warningActive){s.warningPending=s.t+c.systemDelay;log('Riesgo estimado',`${risk.map(r=>r.prefix==='route'?'ruta':'cruce').join(' y ')}: posible cruce en rojo; procesamiento simulado.`);}
-if(!risk.length)s.warningPending=null;
-if(s.warningPending!==null && s.t>=s.warningPending){s.warningPending=null;s.warningActive=true;s.alertIssuedAt=s.t;let threat=risk.slice().sort((a,b)=>a.eta-b.eta)[0];s.alertLead=threat?threat.eta:null;log('Alerta SAI',`Advertencia experimental activada; anticipación teórica ${fmt(s.alertLead)} s.`);if($('saiResponse').value==='green' && threat){let protectedCar=threat.prefix==='route'?'cross':'route';if(signal(phase,protectedCar)==='VERDE'){let delay=Math.max(0,num(protectedCar==='route'?'alertReactionRoute':'alertReactionCross'));s.responsePending={prefix:protectedCar,at:s.t+delay,delay};log('Reacción ante SAI',`${protectedCar==='route'?'Ruta':'Cruce'} recibe alerta; reacción configurada ${fmt(delay)} s.`);}}}
-if(s.responsePending && s.t>=s.responsePending.at-1e-8){let r=s.responsePending,car=s[r.prefix];if(car.v>.02){car.braking=true;car.brakeAt=null;s.responseStartedAt=s.t;log('Respuesta al SAI',`${r.prefix==='route'?'Ruta':'Cruce'} comienza frenado tras ${fmt(r.delay)} s de reacción.`);}s.responsePending=null;}
-if(s.warningActive && !risk.length){s.warningActive=false;log('Alerta SAI','Advertencia cancelada: condición de riesgo ya no presente.');}
-// Coincidencia espacial simplificada: vehículos dentro de una caja de ±5 m de la intersección.
-if(!s.conflictLogged && Math.abs(s.route.x)<=5 && Math.abs(s.cross.x)<=5 && s.route.v>.1 && s.cross.v>.1){s.conflictLogged=true;log('CONFLICTO','Ambos vehículos simultáneamente en zona central (indicador simplificado).');}
-if(s.t<1800 && Math.round(s.t*10)%2===0)history.push({t:s.t,route:s.route.v*3.6,cross:s.cross.v*3.6});if(history.length>9000)history.shift();
-}
-function updateSpeed(prefix){if(!state)return;let car=state[prefix];car.v=Math.max(0,num(prefix+'Speed')/3.6);car.stopReported=false;log('Ajuste de velocidad',`${prefix==='route'?'Ruta':'Cruce'}: ${fmt(car.v*3.6)} km/h.`);render();}
-// Dibujos vectoriales animados, sin archivos externos. Eje longitudinal apunta a la derecha.
-function roundBox(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
-function vehicleSprite(x,y,rotation,color,label,type,moving,t){
- const shapes={auto:[57,29],moto:[47,17],camion:[105,36],omnibus:[119,37]};
- const [len,wide]=shapes[type]||shapes.auto;
- ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.scale(.72,.72);
- const jitter=moving?Math.sin(t*17)*.7:0;ctx.translate(0,jitter);
- // Sombra proyectada
- ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(3,5,len*.56,wide*.63,0,0,Math.PI*2);ctx.fill();
- if(type==='moto'){
-   for(const wx of [-16,16]){ctx.fillStyle='#131c26';ctx.beginPath();ctx.arc(wx,0,8,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#bdcbd9';ctx.lineWidth=2;ctx.beginPath();ctx.arc(wx,0,4,0,Math.PI*2);ctx.stroke();}
-   ctx.strokeStyle=color;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-17,0);ctx.lineTo(-2,-4);ctx.lineTo(16,0);ctx.lineTo(-6,3);ctx.closePath();ctx.stroke();
-   roundBox(-10,-5,20,10,5,'#252b38');ctx.fillStyle='#e5bb8e';ctx.beginPath();ctx.arc(0,-2,5,0,Math.PI*2);ctx.fill();
-   ctx.fillStyle='#ffdf61';ctx.beginPath();ctx.arc(21,0,3,0,Math.PI*2);ctx.fill();
- }else{
-   const half=len/2;
-   roundBox(-half-1,-wide/2-3,15,wide+6,5,'#111b27');roundBox(half-15,-wide/2-3,15,wide+6,5,'#111b27');
-   roundBox(-half,-wide/2,len,wide,8,color);
-   ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.strokeRect(-half+4,-wide/2+4,len-8,wide-8);
-   if(type==='auto'){
-     roundBox(-12,-wide/2+4,23,wide-8,5,'#8dd3ee');roundBox(-half+7,-wide/2+5,10,wide-10,3,'#213e55');
-     ctx.fillStyle='rgba(255,255,255,.6)';ctx.fillRect(-6,-wide/2+5,2,wide-10);
-   }else if(type==='camion'){
-     roundBox(-half+4,-wide/2+4,61,wide-8,4,'#dce7ef');roundBox(half-33,-wide/2+4,28,wide-8,5,color);
-     roundBox(half-30,-wide/2+6,14,wide-12,3,'#9ad5eb');
-     ctx.strokeStyle='#5c7282';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(half-38,-wide/2);ctx.lineTo(half-38,wide/2);ctx.stroke();
-   }else{
-     for(let i=0;i<6;i++)roundBox(-half+10+i*15,-wide/2+4,12,wide-8,2,'#8fd0ea');
-     roundBox(half-18,-wide/2+4,12,wide-8,3,'#d6edf8');
-     ctx.strokeStyle='#f8f2dc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-half+8,0);ctx.lineTo(half-8,0);ctx.stroke();
-   }
-   ctx.fillStyle='#fff2b6';ctx.fillRect(half-4,-wide/2+4,3,7);ctx.fillRect(half-4,wide/2-11,3,7);
-   ctx.fillStyle='#ff6868';ctx.fillRect(-half+1,-wide/2+4,3,7);ctx.fillRect(-half+1,wide/2-11,3,7);
- }
- ctx.restore();
- ctx.font='bold 13px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.shadowColor='#000';ctx.shadowBlur=5;
- const labelOffset=rotation===0?wide*.36+19:len*.36+17;
- ctx.fillText(label,x,y-labelOffset);ctx.shadowBlur=0;
-}
-function light(x,y,color,label){ctx.fillStyle='#09121d';ctx.fillRect(x-16,y-47,32,94);for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(x,y-28+i*28,10,0,Math.PI*2);ctx.fillStyle=(['ROJO','AMARILLO','VERDE'][i]===color)?['#ff5b69','#ffd15e','#39db94'][i]:'#263342';ctx.fill();}ctx.fillStyle='#e1e8ef';ctx.font='12px Segoe UI';ctx.textAlign='center';ctx.fillText(label,x,y+65);}
-// Señal visual independiente: cuadrado oscuro y triángulo amarillo de precaución.
-// En reposo se muestra atenuada; durante la advertencia parpadea.
-function drawCautionSign(x,y,active,t){
- const on=active && Math.floor(t*3)%2===0;
- ctx.save();ctx.translate(x,y);
- ctx.shadowColor=on?'#ffd443':'transparent';ctx.shadowBlur=on?22:0;
- ctx.fillStyle='#0c1724';ctx.strokeStyle=on?'#ffe36b':'#556171';ctx.lineWidth=4;
- roundBox(-51,-51,102,102,10,'#101a28');ctx.strokeRect(-46,-46,92,92);
- ctx.globalAlpha=active?(on?1:.2):.32;
- ctx.beginPath();ctx.moveTo(0,-35);ctx.lineTo(39,33);ctx.lineTo(-39,33);ctx.closePath();
- ctx.fillStyle='#ffd83d';ctx.fill();ctx.strokeStyle='#fff0a1';ctx.lineWidth=3;ctx.stroke();
- ctx.fillStyle='#151b24';roundBox(-5,-12,10,26,3,'#151b24');
- ctx.beginPath();ctx.arc(0,23,5,0,Math.PI*2);ctx.fill();
- ctx.restore();
-}
-function drawScene(){let w=scene.width,h=scene.height;ctx.clearRect(0,0,w,h);ctx.fillStyle='#173d37';ctx.fillRect(0,0,w,h);ctx.fillStyle='#293847';ctx.fillRect(0,195,w,130);ctx.fillRect(430,0,140,h);ctx.strokeStyle='#e3cf85';ctx.lineWidth=3;ctx.setLineDash([20,16]);ctx.beginPath();ctx.moveTo(0,260);ctx.lineTo(w,260);ctx.moveTo(500,0);ctx.lineTo(500,h);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(412,196);ctx.lineTo(412,251);ctx.moveTo(510,342);ctx.lineTo(560,342);ctx.stroke();ctx.fillStyle='#a3b2c4';ctx.font='bold 17px Segoe UI';ctx.textAlign='left';ctx.fillText('RUTA PRINCIPAL →',35,225);ctx.fillText('↑ CALLE SECUNDARIA',575,475);
-let c=state.c,scale=3;let routeX=412-state.route.x*scale,crossY=342+state.cross.x*scale;ctx.strokeStyle='#5ae4f0';ctx.setLineDash([6,6]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(412-c.detectDistance*scale,185);ctx.lineTo(412-c.detectDistance*scale,334);ctx.moveTo(422,342+c.detectDistance*scale);ctx.lineTo(570,342+c.detectDistance*scale);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#76e6ef';ctx.font='12px Segoe UI';ctx.fillText('Cámara / umbral',Math.max(8,412-c.detectDistance*scale),175);
-if(routeX>-90&&routeX<1090)vehicleSprite(routeX,286,0,'#f06467',`Ruta · ${fmt(state.route.v*3.6,0)} km/h`,state.route.type,state.route.v>.1,state.t);if(crossY>-90&&crossY<610)vehicleSprite(470,crossY,-Math.PI/2,'#55b7fa',`Cruce · ${fmt(state.cross.v*3.6,0)} km/h`,state.cross.type,state.cross.v>.1,state.t);
-let phase=state.p[state.phaseIdx][0];light(360,130,signal(phase,'route'),'RUTA');light(620,375,signal(phase,'cross'),'CRUCE');drawCautionSign(855,91,state.warningActive,state.t);ctx.fillStyle='#d3e6fa';ctx.font='13px Segoe UI';ctx.fillText('Vista esquemática · no a escala para diseño vial',20,505);}
-function drawChart(){let w=chart.width,h=chart.height;g.clearRect(0,0,w,h);g.fillStyle='#0a1728';g.fillRect(0,0,w,h);let data=history.slice(-700);let maxV=Math.max(30,...data.map(x=>Math.max(x.route,x.cross)))*1.15;let minT=data.length?data[0].t:0,maxT=data.length?data[data.length-1].t:minT+10;if(maxT-minT<10)maxT=minT+10;g.strokeStyle='#30455b';g.lineWidth=1;g.font='12px Segoe UI';g.fillStyle='#b7c6d8';for(let i=0;i<=4;i++){let y=205-i*43;g.beginPath();g.moveTo(55,y);g.lineTo(980,y);g.stroke();g.fillText(fmt(i*maxV/4,0),12,y+4);}for(let i=0;i<=5;i++){let x=55+i*185;g.fillText(fmt(minT+i*(maxT-minT)/5,0)+'s',x,235);}for(let [key,color] of [['route','#f06467'],['cross','#55b7fa']]){g.strokeStyle=color;g.lineWidth=3;g.beginPath();data.forEach((d,i)=>{let x=55+(d.t-minT)/(maxT-minT)*925,y=205-d[key]/maxV*172;if(i===0)g.moveTo(x,y);else g.lineTo(x,y);});g.stroke();}g.fillStyle='#f06467';g.fillText('— Ruta',820,20);g.fillStyle='#55b7fa';g.fillText('— Cruce',905,20);}
-function renderTable(){let rows=[20,30,40,50,60,70,80,90,100,110,120];$('brakeTable').innerHTML=rows.map(v=>{let r=num('routeReaction'),b=num('routeBrake'),cr=num('crossReaction'),cb=num('crossBrake'),ms=v/3.6;return `<tr><td>${v} km/h</td><td>${fmt(ms*r)} m</td><td>${fmt(ms*ms/(2*b))} m</td><td><strong>${fmt(stopDistance(v,r,b))} m</strong></td><td>${fmt(ms*cr)} m</td><td>${fmt(ms*ms/(2*cb))} m</td><td><strong>${fmt(stopDistance(v,cr,cb))} m</strong></td></tr>`;}).join('');}
-function renderEvents(){$('eventCount').textContent=`${events.length} eventos`;$('eventTable').innerHTML=events.slice(0,90).map(e=>`<tr><td>${fmt(e.time)} s</td><td>${e.type}</td><td>${e.detail}</td></tr>`).join('');}
-function render(){if(!state)return;let s=state,phase=s.p[s.phaseIdx][0];$('clock').textContent=`${String(Math.floor(s.t/60)).padStart(2,'0')}:${fmt(s.t%60).padStart(4,'0')}`;for(let prefix of ['route','cross']){let car=s[prefix],sig=signal(phase,prefix),el=$(prefix+'Signal');el.textContent=sig;el.className='signal '+({VERDE:'green',AMARILLO:'yellow',ROJO:'red'}[sig]);$(prefix+'Current').textContent=fmt(car.v*3.6)+' km/h';$(prefix+'Position').textContent=(car.x>=0?'Antes de línea: ':'Después de línea: ')+fmt(Math.abs(car.x))+' m';$(prefix+'Stopping').textContent=fmt(stopDistance(car.v*3.6,car.reaction,car.brake))+' m';$(prefix+'ETA').textContent=car.x<=0?'Ya pasó':car.v>.1?fmt(car.x/car.v)+' s':'Detenido';}
-$('alertIssued').textContent=s.alertIssuedAt===null?'Sin alerta':fmt(s.alertIssuedAt)+' s';$('alertLead').textContent=s.alertLead===null?'—':fmt(s.alertLead)+' s';$('alertReactionStatus').textContent=s.responsePending?'Esperando '+fmt(Math.max(0,s.responsePending.at-s.t))+' s':s.responseStartedAt!==null?'Frenando desde '+fmt(s.responseStartedAt)+' s':'Sin respuesta';$('phaseRemaining').textContent=fmt(s.p[s.phaseIdx][1]-s.phaseElapsed)+' s';let alert=$('alertBox');if(s.warningActive){alert.className='alert danger';alert.textContent='⚠ ADVERTENCIA EXPERIMENTAL: se estima riesgo de cruce en rojo según velocidad, distancia y frenado configurados. No es una predicción validada.';}else if(s.warningPending!==null){alert.className='alert warn';alert.textContent='Posible riesgo detectado. Simulando retardo de procesamiento del SAI…';}else{alert.className='alert';alert.textContent='Sin advertencia activa. Los vehículos y los semáforos se evalúan en cada paso de simulación.';}drawScene();drawChart();}
-function preset(kind){pause();if(kind==='safe'){Object.entries({routeSpeed:50,routeDistance:120,crossSpeed:35,crossDistance:110,routeGreen:18,routeYellow:4,crossGreen:14,crossYellow:3,allRed:2,phaseStart:'routeGreen'}).forEach(([k,v])=>set(k,v));$('autoBrake').checked=true;}else if(kind==='risk'){Object.entries({routeSpeed:95,routeDistance:65,crossSpeed:40,crossDistance:55,routeGreen:18,routeYellow:4,crossGreen:14,crossYellow:3,allRed:2,phaseStart:'crossGreen'}).forEach(([k,v])=>set(k,v));$('autoBrake').checked=false;}else{Object.entries({routeSpeed:85,routeDistance:65,crossSpeed:45,crossDistance:85,phaseStart:'crossGreen'}).forEach(([k,v])=>set(k,v));$('autoBrake').checked=true;}reset();}
-function exportCSV(){let rows=[['vehiculo_ruta',state.route.type],['vehiculo_cruce',state.cross.type],['nota','El tipo de vehículo es visual; ajustar desaceleración y reacción manualmente.'],[],['tiempo_s','tipo','detalle'],...events.slice().reverse().map(e=>[fmt(e.time,2),e.type,e.detail]),[],['tiempo_s','velocidad_ruta_kmh','velocidad_cruce_kmh'],...history.map(h=>[fmt(h.t,2),fmt(h.route,2),fmt(h.cross,2)])];let csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');let blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='SAI_simulacion_'+new Date().toISOString().replaceAll(':','-')+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-$('play').onclick=play;$('pause').onclick=pause;$('step').onclick=()=>{pause();tick(DT);render()};$('reset').onclick=reset;$('export').onclick=exportCSV;
-$('routeBrakeNow').onclick=()=>manualBrake('route');$('crossBrakeNow').onclick=()=>manualBrake('cross');$('routeRelease').onclick=()=>release('route');$('crossRelease').onclick=()=>release('cross');$('presetSafe').onclick=()=>preset('safe');$('presetRisk').onclick=()=>preset('risk');$('presetBrake').onclick=()=>preset('brake');
-for(let prefix of ['route','cross']){$(prefix+'Type').addEventListener('change',()=>{if(state){state[prefix].type=$(prefix+'Type').value;log('Tipo de vehículo',`${prefix==='route'?'Ruta':'Cruce'}: ${state[prefix].type}.`);render();}});$(prefix+'Speed').addEventListener('change',()=>updateSpeed(prefix));for(let suffix of ['Brake','Reaction'])$(prefix+suffix).addEventListener('change',()=>{renderTable();render();});}
-for(let id of ['routeGreen','routeYellow','crossGreen','crossYellow','allRed','detectDistance','systemDelay','warningWindow','phaseStart'])$(id).addEventListener('change',()=>{if(state)log('Configuración','Parámetro modificado; reiniciar para aplicarlo.');});
-$('warningWindowLive').addEventListener('input',()=>{let v=num('warningWindowLive');$('warningWindowValue').textContent=fmt(v)+' s';$('warningWindow').value=v;if(state)state.c.warningWindow=v;render();});$('warningWindow').addEventListener('input',()=>{$('warningWindowLive').value=$('warningWindow').value;$('warningWindowValue').textContent=fmt(num('warningWindow'))+' s';if(state)state.c.warningWindow=num('warningWindow');render();});for(let id of ['alertReactionRoute','alertReactionCross','saiResponse'])$(id).addEventListener('change',render);
-$('autoBrake').addEventListener('change',()=>{if(state)state.c.autoBrake=$('autoBrake').checked;});renderTable();reset();
+const $ = id => document.getElementById(id);
+const DT = 0.05, ACCEL = 2.5;
+const fmt = (x, d = 1) => Number.isFinite(x) ? x.toLocaleString('es-AR', {minimumFractionDigits: d, maximumFractionDigits: d}) : '—';
+const kmh = v => v * 3.6;
+const NAMES = {route: 'A', cross: 'B'};
+const LONG = {route: 'A (ruta)', cross: 'B (calle)'};
+const TYPES = {auto: {emo: '🚗', name: 'Auto', len: 4.5, brake: 6.5}, moto: {emo: '🏍️', name: 'Moto', len: 2.2, brake: 6}, camion: {emo: '🚚', name: 'Camión', len: 9, brake: 4}, omnibus: {emo: '🚌', name: 'Ómnibus', len: 12, brake: 4.5}};
+const BOX = 15;       // metros desde la línea de detención hasta el final de la intersección
+const BOX_START = 3;  // senda peatonal entre la línea y el cuadrado central
 
-</script></body></html>
+// ---------- Parámetros ----------
+const vehicleFields = p => [
+  {id: p + 'Speed', label: 'Velocidad', unit: 'km/h', min: 0, max: 140, step: 1, d: 0, live: true, hint: 'Velocidad a la que quiere circular.'},
+  {id: p + 'Distance', label: 'Distancia a la esquina al empezar', unit: 'm', min: 20, max: 200, step: 5, d: 0, hint: 'Cuán lejos de la línea de detención arranca.'},
+  {id: p + 'Brake', label: 'Fuerza de frenado', unit: 'm/s²', min: 1, max: 9, step: 0.5, d: 1, live: true, hint: 'Auto en seco ≈ 6–7 · camión ≈ 4 · piso mojado ≈ 3–4.'},
+  {id: p + 'Reaction', label: 'Reacción ante el semáforo', unit: 's', min: 0, max: 3, step: 0.1, d: 1, live: true, hint: 'Lo típico es entre 1 y 1,5 s.'},
+  {id: p + 'AlertReaction', label: 'Reacción ante el aviso SAI', unit: 's', min: 0, max: 4, step: 0.1, d: 1, live: true, hint: 'Cuánto tarda en frenar al ver el aviso ⚠ (si tiene verde).'}
+];
+const GROUPS = [
+  {key: 'route', tag: 'A', title: 'Vehículo A · Ruta principal', open: true, fields: vehicleFields('route')},
+  {key: 'cross', tag: 'B', title: 'Vehículo B · Calle secundaria', open: false, fields: vehicleFields('cross')},
+  {key: 'lights', tag: '🚦', title: 'Semáforos', open: false, fields: [
+    {id: 'phaseStart', label: 'Al empezar, el verde lo tiene…', type: 'select', options: [['routeGreen', 'A · la ruta'], ['crossGreen', 'B · la calle']]},
+    {id: 'routeGreen', label: 'Verde para A', unit: 's', min: 3, max: 60, step: 1, d: 0},
+    {id: 'routeYellow', label: 'Amarillo para A', unit: 's', min: 1, max: 8, step: 0.5, d: 1},
+    {id: 'crossGreen', label: 'Verde para B', unit: 's', min: 3, max: 60, step: 1, d: 0},
+    {id: 'crossYellow', label: 'Amarillo para B', unit: 's', min: 1, max: 8, step: 0.5, d: 1},
+    {id: 'allRed', label: 'Rojo total (ambos)', unit: 's', min: 0, max: 6, step: 0.5, d: 1, hint: 'Pausa de seguridad para despejar la esquina.'},
+    {id: 'autoBrake', label: 'Los conductores respetan el semáforo', type: 'toggle', live: true, hint: 'Apagalo para simular un conductor distraído que no frena.'}
+  ]},
+  {key: 'sai', tag: '⚠', title: 'Sistema SAI', open: false, fields: [
+    {id: 'saiResponse', label: 'Cuando se enciende el aviso, el conductor con verde…', type: 'select', live: true, options: [['brake', 'Frena'], ['off', 'No hace nada (solo se muestra)']]},
+    {id: 'detectDistance', label: 'La cámara detecta desde', unit: 'm', min: 10, max: 200, step: 5, d: 0, hint: 'Distancia a la línea desde donde la cámara “ve” al vehículo.'},
+    {id: 'systemDelay', label: 'Demora del sistema', unit: 's', min: 0, max: 2, step: 0.1, d: 1, live: true, hint: 'Tiempo que tarda en procesar y encender el aviso.'},
+    {id: 'warningWindow', label: 'Anticipación máxima del aviso', unit: 's', min: 1, max: 12, step: 0.5, d: 1, live: true, hint: 'Solo avisa si el infractor llegaría a la línea antes de este tiempo.'}
+  ]}
+];
+const DEFAULTS = {routeType: 'auto', crossType: 'auto', routeSpeed: 70, routeDistance: 110, routeBrake: 5, routeReaction: 1.2, routeAlertReaction: 1.2,
+  crossSpeed: 45, crossDistance: 90, crossBrake: 5, crossReaction: 1, crossAlertReaction: 1, phaseStart: 'routeGreen', routeGreen: 12, routeYellow: 3,
+  crossGreen: 10, crossYellow: 3, allRed: 2, autoBrake: true, saiResponse: 'brake', detectDistance: 80, systemDelay: 0.3, warningWindow: 5};
+
+const SCENARIOS = [
+  {id: 'normal', emo: '✅', title: 'Todo en orden', desc: 'Cada uno respeta su semáforo. B espera en rojo y cruza con verde.',
+    v: {routeSpeed: 50, routeDistance: 110, crossSpeed: 40, crossDistance: 80, phaseStart: 'routeGreen', routeGreen: 10, autoBrake: true, saiResponse: 'brake'}},
+  {id: 'redrun', emo: '💥', title: 'Cruce en rojo sin aviso', desc: 'A viene rápido y distraído. El SAI avisa, pero B no reacciona.',
+    v: {routeSpeed: 90, routeDistance: 75, crossSpeed: 40, crossDistance: 38, phaseStart: 'crossGreen', autoBrake: false, saiResponse: 'off'}},
+  {id: 'saved', emo: '🛡️', title: 'El SAI evita el choque', desc: 'La misma situación, pero B frena al ver el aviso ⚠.',
+    v: {routeSpeed: 90, routeDistance: 75, crossSpeed: 40, crossDistance: 38, phaseStart: 'crossGreen', autoBrake: false, saiResponse: 'brake'}},
+  {id: 'late', emo: '🛑', title: 'Frenó demasiado tarde', desc: 'A intenta frenar ante el rojo, pero va muy rápido y no le alcanza.',
+    v: {routeSpeed: 85, routeDistance: 65, crossSpeed: 45, crossDistance: 70, phaseStart: 'crossGreen', autoBrake: true, saiResponse: 'brake'}}
+];
+
+const P = {}; // valores actuales
+const FIELD = {};
+GROUPS.forEach(g => g.fields.forEach(f => FIELD[f.id] = f));
+FIELD.routeType = FIELD.crossType = {live: true};
+
+function buildParams() {
+  $('groups').innerHTML = GROUPS.map(g => `
+    <details class="group" ${g.open ? 'open' : ''}><summary><span class="tag ${g.tag === 'A' || g.tag === 'B' ? g.tag : 'S'}" ${g.tag === '🚦' ? 'style="background:var(--surface-2)"' : ''}>${g.tag}</span>${g.title}</summary>
+    <div class="gbody">
+      ${g.key === 'route' || g.key === 'cross' ? `<div class="field"><span class="flabel">Tipo de vehículo</span><div class="typegrid" data-type="${g.key}">${Object.entries(TYPES).map(([k, t]) => `<button type="button" data-k="${k}" aria-pressed="false">${t.emo}<span>${t.name}</span></button>`).join('')}</div><small>Cambia su largo y aplica un frenado típico (podés ajustarlo después).</small></div>` : ''}
+      ${g.fields.map(fieldHTML).join('')}
+    </div></details>`).join('');
+}
+function fieldHTML(f) {
+  const r = f.live ? '' : '<span class="restart" title="Reinicia el escenario">↺</span>';
+  if (f.type === 'select') return `<div class="field"><label for="${f.id}"><span>${f.label}${r}</span></label><select id="${f.id}">${f.options.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('')}</select>${f.hint ? `<small>${f.hint}</small>` : ''}</div>`;
+  if (f.type === 'toggle') return `<div class="field"><label class="toggle" style="justify-content:flex-start;color:var(--text);font-weight:600"><input type="checkbox" id="${f.id}"> ${f.label}</label>${f.hint ? `<small>${f.hint}</small>` : ''}</div>`;
+  return `<div class="field"><label for="${f.id}"><span>${f.label}${r}</span><output id="${f.id}Out"></output></label><input type="range" id="${f.id}" min="${f.min}" max="${f.max}" step="${f.step}">${f.hint ? `<small>${f.hint}</small>` : ''}</div>`;
+}
+function writeInputs() {
+  for (const [id, f] of Object.entries(FIELD)) {
+    const el = $(id);
+    if (!el) continue;
+    if (f.type === 'toggle') el.checked = !!P[id]; else el.value = P[id];
+    if ($(id + 'Out')) $(id + 'Out').textContent = fmt(+P[id], f.d) + ' ' + f.unit;
+  }
+  document.querySelectorAll('.typegrid').forEach(gr => gr.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === P[gr.dataset.type + 'Type'])));
+}
+function onParam(id, value) {
+  P[id] = value;
+  const f = FIELD[id];
+  if ($(id + 'Out')) $(id + 'Out').textContent = fmt(+value, f.d) + ' ' + f.unit;
+  markCustom();
+  renderBrakeTable();
+  if (!f.live) {
+    const wasRunning = state && state.t > 0;
+    reset();
+    if (wasRunning) toast('Cambiaste un valor inicial: el escenario volvió al comienzo.');
+  } else if (state) {
+    if (id === 'routeType' || id === 'crossType') { const k = id.replace('Type', ''); state[k].type = value; state[k].len = TYPES[value].len; }
+    if (id === 'routeSpeed' || id === 'crossSpeed') { const k = id.replace('Speed', ''); log('Ajuste', `${LONG[k]} ahora quiere ir a ${fmt(+value, 0)} km/h.`); }
+    render();
+  }
+}
+function wireParams() {
+  for (const [id, f] of Object.entries(FIELD)) {
+    const el = $(id);
+    if (!el) continue;
+    if (f.type === 'toggle') el.addEventListener('change', () => onParam(id, el.checked));
+    else if (f.type === 'select') el.addEventListener('change', () => onParam(id, el.value));
+    else {
+      el.addEventListener('input', () => { if (f.live) onParam(id, +el.value); else { P[id] = +el.value; $(id + 'Out').textContent = fmt(+el.value, f.d) + ' ' + f.unit; } });
+      if (!f.live) el.addEventListener('change', () => onParam(id, +el.value));
+    }
+  }
+  document.querySelectorAll('.typegrid').forEach(gr => gr.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = gr.dataset.type;
+    P[k + 'Brake'] = TYPES[b.dataset.k].brake;
+    onParam(k + 'Type', b.dataset.k);
+    writeInputs();
+  }));
+}
+
+// ---------- Escenarios ----------
+let currentScenario = 'normal';
+function buildScenarios() {
+  $('scenarios').innerHTML = SCENARIOS.map(s => `<button class="scenario" type="button" data-id="${s.id}" aria-pressed="false"><span class="emo" aria-hidden="true">${s.emo}</span><span><strong>${s.title}</strong><span>${s.desc}</span></span></button>`).join('');
+  $('scenarios').addEventListener('click', e => { const b = e.target.closest('.scenario'); if (b) loadScenario(b.dataset.id, true); });
+}
+function loadScenario(id, autoplay) {
+  const sc = SCENARIOS.find(s => s.id === id);
+  Object.assign(P, DEFAULTS, sc.v);
+  currentScenario = id;
+  writeInputs();
+  document.querySelectorAll('.scenario').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === id));
+  $('customNote').textContent = '';
+  renderBrakeTable();
+  reset();
+  if (autoplay) play();
+}
+function markCustom() {
+  if (!currentScenario) return;
+  currentScenario = null;
+  document.querySelectorAll('.scenario').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  $('customNote').textContent = '✏️ Escenario personalizado: estás usando tus propios valores.';
+}
+
+// ---------- Motor de simulación ----------
+let state = null, running = false, events = [], history = [], speed = 1, lastFrame = 0, acc = 0;
+
+function phaseList() {
+  const arr = [['routeGreen', P.routeGreen], ['routeYellow', P.routeYellow], ['allRed1', P.allRed], ['crossGreen', P.crossGreen], ['crossYellow', P.crossYellow], ['allRed2', P.allRed]].filter(a => a[1] > 0);
+  const i = arr.findIndex(a => a[0] === P.phaseStart);
+  return [...arr.slice(i), ...arr.slice(0, i)];
+}
+const PHASE_TEXT = {routeGreen: 'verde para A', routeYellow: 'amarillo para A', allRed1: 'rojo para ambos', crossGreen: 'verde para B', crossYellow: 'amarillo para B', allRed2: 'rojo para ambos'};
+function signal(phase, k) { return phase === k + 'Green' ? 'VERDE' : phase === k + 'Yellow' ? 'AMARILLO' : 'ROJO'; }
+function curPhase() { return state.p[state.phaseIdx][0]; }
+
+function newCar(k) {
+  const type = P[k + 'Type'];
+  return {k, x: P[k + 'Distance'], v: P[k + 'Speed'] / 3.6, type, len: TYPES[type].len, braking: false, reason: null, brakeAt: null,
+    detected: P[k + 'Distance'] <= P.detectDistance, crossed: false, crossSig: null, stopped: false, firstStopX: null, goOnYellow: false, cleared: false};
+}
+// Distancia que necesita para detenerse teniendo en cuenta si ya está frenando.
+function stopNeed(car) {
+  const a = Math.max(0.1, P[car.k + 'Brake']), v = car.v;
+  if (car.braking) return v * v / (2 * a);
+  const react = car.brakeAt !== null ? Math.max(0, car.brakeAt - state.t) : P[car.k + 'Reaction'];
+  // Si está acelerando, durante la reacción gana velocidad.
+  const vt = Math.min(P[car.k + 'Speed'] / 3.6, v + (v < P[car.k + 'Speed'] / 3.6 ? ACCEL * react : 0));
+  return (v + vt) / 2 * react + vt * vt / (2 * a);
+}
+function theoryStop(kmhV, reaction, a) { const v = kmhV / 3.6; return v * reaction + v * v / (2 * Math.max(0.1, a)); }
+const inBox = car => car.x <= -BOX_START && car.x >= -(BOX + car.len);
+
+function log(type, detail, level = '') {
+  events.unshift({t: state ? state.t : 0, type, detail, level});
+  if (events.length > 3000) events.pop();
+  logDirty = true;
+}
+
+function reset() {
+  pause();
+  sceneScale = approachScale();
+  state = {t: 0, p: phaseList(), phaseIdx: 0, phaseElapsed: 0, route: newCar('route'), cross: newCar('cross'),
+    warnPending: null, warnActive: false, threat: null, alertAt: null, alertLead: null, respPending: null, respAt: null, respKey: null,
+    conflict: false, conflictAt: null, finished: false, stoppedFor: 0};
+  events = []; history = [];
+  log('Inicio', `Comienza la simulación con ${PHASE_TEXT[curPhase()]}.`);
+  pushHistory();
+  $('result').hidden = true;
+  $('overlay').hidden = false;
+  render(true);
+}
+
+function brakeFor(car, reason, immediate) {
+  car.reason = reason;
+  if (immediate) { car.braking = true; car.brakeAt = null; } else if (car.brakeAt === null && !car.braking) car.brakeAt = state.t + P[car.k + 'Reaction'];
+}
+function release(car) { car.braking = false; car.brakeAt = null; car.reason = null; }
+
+function tick(dt) {
+  const s = state;
+  s.t += dt; s.phaseElapsed += dt;
+  if (s.phaseElapsed >= s.p[s.phaseIdx][1] - 1e-9) {
+    s.phaseElapsed -= s.p[s.phaseIdx][1];
+    s.phaseIdx = (s.phaseIdx + 1) % s.p.length;
+    log('Semáforo', `Cambia a ${PHASE_TEXT[curPhase()]}.`, 'light');
+  }
+  const phase = curPhase();
+  for (const k of ['route', 'cross']) {
+    const car = s[k], other = s[k === 'route' ? 'cross' : 'route'], sig = signal(phase, k), target = P[k + 'Speed'] / 3.6;
+    if (sig === 'VERDE') car.goOnYellow = false;
+    // Conductor ante amarillo/rojo
+    if (P.autoBrake && car.x > 0 && car.v > 0.1 && sig !== 'VERDE' && car.brakeAt === null && !car.braking && !car.goOnYellow) {
+      const need = stopNeed(car);
+      if (sig === 'AMARILLO' && car.x < need - 1) { car.goOnYellow = true; log('Decisión', `${LONG[k]} ve el amarillo muy cerca y decide seguir.`); }
+      else if (car.x <= need + 3) { brakeFor(car, 'signal'); log('Frenado', `${LONG[k]} ve el ${sig.toLowerCase()} y va a frenar (reacción ${fmt(P[k + 'Reaction'])} s).`); }
+    }
+    if (car.brakeAt !== null && s.t >= car.brakeAt - 1e-8) { car.braking = true; car.brakeAt = null; }
+    // Liberar frenos cuando corresponde
+    if (car.braking && car.reason === 'signal' && sig === 'VERDE') { release(car); log('Arranque', `${LONG[k]} tiene verde y arranca.`, 'ok'); }
+    if (car.braking && car.reason === 'sai' && (other.x < -(BOX + other.len) || (other.v < 0.05 && !inBox(other)))) {
+      // Si mientras tanto su semáforo pasó a rojo/amarillo, se queda esperando el verde.
+      if (P.autoBrake && sig !== 'VERDE' && car.x > 0) car.reason = 'signal';
+      else { release(car); log('Arranque', `${LONG[k]} ve la esquina libre y sigue.`, 'ok'); }
+    }
+    // Movimiento
+    const oldX = car.x;
+    if (car.braking) car.v = Math.max(0, car.v - P[k + 'Brake'] * dt);
+    else if (car.v < target) car.v = Math.min(target, car.v + ACCEL * dt);
+    else if (car.v > target) car.v = Math.max(target, car.v - ACCEL * dt);
+    car.x -= car.v * dt;
+    if (!car.detected && oldX > P.detectDistance && car.x <= P.detectDistance) { car.detected = true; log('Cámara', `La cámara detecta a ${LONG[k]} a ${fmt(car.x, 0)} m, yendo a ${fmt(kmh(car.v), 0)} km/h.`); }
+    if (!car.crossed && oldX > 0 && car.x <= 0) {
+      car.crossed = true; car.crossSig = sig;
+      log(sig === 'ROJO' ? 'Cruce en rojo' : 'Cruce', `${LONG[k]} pasa la línea con ${sig.toLowerCase()} a ${fmt(kmh(car.v), 0)} km/h.`, sig === 'ROJO' ? 'danger' : 'ok');
+    }
+    if (!car.stopped && car.v <= 0.02 && (car.braking || target === 0)) {
+      car.stopped = true;
+      if (car.x > 0 && car.firstStopX === null && !car.crossed) car.firstStopX = car.x;
+      log('Detenido', car.x > 0 ? `${LONG[k]} se detiene a ${fmt(car.x)} m de la línea.` : `${LONG[k]} queda detenido dentro de la esquina.`, car.x > 0 ? 'ok' : 'danger');
+    }
+    if (car.stopped && car.v > 0.5) car.stopped = false;
+    if (!car.cleared && car.x < -(BOX + car.len)) car.cleared = true;
+  }
+
+  // Riesgo de cruce en rojo (lo que evalúa el SAI)
+  const risk = [];
+  for (const k of ['route', 'cross']) {
+    const car = s[k], sig = signal(phase, k), eta = car.v > 0.1 ? car.x / car.v : Infinity;
+    if (car.detected && !car.crossed && car.x > 0 && sig === 'ROJO' && car.v > 0.5 && eta <= P.warningWindow && stopNeed(car) > car.x) risk.push({k, eta});
+  }
+  risk.sort((a, b) => a.eta - b.eta);
+  if (risk.length && s.warnPending === null && !s.warnActive) { s.warnPending = s.t + P.systemDelay; log('Riesgo', `El SAI calcula que ${LONG[risk[0].k]} no llega a frenar ante el rojo.`, 'warn'); }
+  if (!risk.length && s.warnPending !== null) s.warnPending = null;
+  if (s.warnPending !== null && s.t >= s.warnPending) {
+    const th = risk[0];
+    s.warnPending = null; s.warnActive = true; s.threat = th.k;
+    if (s.alertAt === null) { s.alertAt = s.t; s.alertLead = th.eta; }
+    log('Alerta SAI', `Se enciende el aviso ⚠. ${LONG[th.k]} llega a la línea en ${fmt(th.eta)} s.`, 'danger');
+    const pk = th.k === 'route' ? 'cross' : 'route', pc = s[pk];
+    if (P.saiResponse === 'brake' && !pc.crossed && pc.v > 0.1 && signal(phase, pk) === 'VERDE') {
+      s.respPending = {k: pk, at: s.t + P[pk + 'AlertReaction']};
+      log('Reacción', `${LONG[pk]} ve el aviso; reacciona en ${fmt(P[pk + 'AlertReaction'])} s.`);
+    } else if (P.saiResponse === 'off') log('Reacción', `${LONG[pk]} no reacciona al aviso.`, 'warn');
+  }
+  if (s.respPending && s.t >= s.respPending.at - 1e-8) {
+    const car = s[s.respPending.k];
+    if (car.v > 0.05 && !car.crossed) { brakeFor(car, 'sai', true); s.respAt = s.t; s.respKey = car.k; log('Frena por el SAI', `${LONG[car.k]} empieza a frenar gracias al aviso.`, 'ok'); }
+    s.respPending = null;
+  }
+  if (s.warnActive) {
+    const th = s[s.threat];
+    if (th.x < -(BOX + th.len) || (th.v < 0.05 && th.x > 0)) { s.warnActive = false; log('Alerta SAI', 'El aviso se apaga: el riesgo terminó.'); }
+  }
+  // Conflicto: ambos dentro del cuadrado central y al menos uno en movimiento
+  if (!s.conflict && inBox(s.route) && inBox(s.cross) && (s.route.v > 0.3 || s.cross.v > 0.3)) {
+    s.conflict = true; s.conflictAt = s.t;
+    log('Posible choque', 'Los dos vehículos están dentro de la esquina al mismo tiempo.', 'danger');
+  }
+  if (Math.round(s.t / DT) % 4 === 0) pushHistory();
+  // Fin: ambos fuera de la vista, o mucho tiempo sin movimiento
+  s.stoppedFor = (s.route.v < 0.05 && s.cross.v < 0.05) ? s.stoppedFor + dt : 0;
+  if ((exitedView(s.route) && exitedView(s.cross)) || s.t > 240 || (s.stoppedFor > 8 && !anyWillMove())) finish();
+}
+function anyWillMove() { const ph = curPhase(); return ['route', 'cross'].some(k => state[k].reason === 'signal' || state[k].reason === 'sai' || signal(ph, k) === 'VERDE' && !state[k].braking); }
+function pushHistory() { const s = state, ph = curPhase(); history.push({t: s.t, a: kmh(s.route.v), b: kmh(s.cross.v), sa: signal(ph, 'route'), sb: signal(ph, 'cross')}); if (history.length > 6000) history.shift(); }
+
+function finish() {
+  const s = state;
+  s.finished = true; pause();
+  log('Fin', 'Terminó la simulación.');
+  const items = [];
+  for (const k of ['route', 'cross']) {
+    const c = s[k];
+    if (c.firstStopX !== null) items.push(`${LONG[k]} se detuvo a ${fmt(c.firstStopX)} m de la línea${c.crossSig ? ` y luego cruzó con ${c.crossSig.toLowerCase()}` : ''}.`);
+    else if (c.crossSig === 'ROJO') items.push(`<b>${LONG[k]} cruzó en rojo</b> a ${fmt(firstCrossSpeed(k), 0)} km/h.`);
+    else if (c.crossSig) items.push(`${LONG[k]} cruzó con ${c.crossSig.toLowerCase()}.`);
+    else items.push(`${LONG[k]} no llegó a cruzar.`);
+  }
+  if (s.alertAt !== null) items.push(`El SAI encendió el aviso a los ${fmt(s.alertAt)} s, <b>${fmt(s.alertLead)} s antes</b> de que el infractor llegara a la línea.`);
+  else items.push('El SAI no necesitó dar ningún aviso.');
+  if (s.respAt !== null) items.push(`${LONG[s.respKey]} empezó a frenar por el aviso a los ${fmt(s.respAt)} s.`);
+  else if (s.alertAt !== null && P.saiResponse === 'off') items.push('El otro conductor no reaccionó al aviso.');
+  let level = 'ok', title = '✅ Todo salió bien';
+  const red = s.route.crossSig === 'ROJO' || s.cross.crossSig === 'ROJO';
+  if (s.conflict) { level = 'danger'; title = '💥 Posible choque'; items.unshift(`Los dos vehículos coincidieron dentro de la esquina a los ${fmt(s.conflictAt)} s.`); }
+  else if (red) { level = 'warn'; title = s.respAt !== null ? '🛡️ Hubo un cruce en rojo, pero el SAI evitó el choque' : '⚠️ Hubo un cruce en rojo, sin choque'; }
+  const tip = s.conflict ? (P.saiResponse === 'off' ? 'Probá activar la respuesta al aviso en “Sistema SAI”, o bajá la velocidad de A.' : 'Probá bajar la reacción ante el aviso de B o aumentar la distancia de la cámara.')
+    : red ? 'Probá bajar la velocidad de A para ver si llega a frenar.' : 'Probá subir la velocidad de A o apagar “Los conductores respetan el semáforo”.';
+  items.push(`<span style="color:var(--text-3)">💡 ${tip}</span>`);
+  const r = $('result');
+  r.className = 'card result ' + level; r.hidden = false;
+  $('resTitle').textContent = title;
+  $('resList').innerHTML = items.map(i => `<li>${i}</li>`).join('');
+  render(true);
+  r.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest'});
+}
+function firstCrossSpeed(k) { const e = events.slice().reverse().find(e => e.type === 'Cruce en rojo' && e.detail.startsWith(LONG[k])); const m = e && e.detail.match(/a (\d+) km\/h/); return m ? +m[1] : NaN; }
+
+// ---------- Reproducción ----------
+function play() {
+  if (state.finished) reset();
+  if (running) return;
+  running = true; lastFrame = performance.now(); acc = 0;
+  $('overlay').hidden = true;
+  updatePlayBtn();
+  requestAnimationFrame(loop);
+}
+function pause() { running = false; updatePlayBtn(); }
+function toggle() { running ? pause() : play(); }
+function loop(now) {
+  if (!running) return;
+  acc += Math.min(0.1, (now - lastFrame) / 1000) * speed;
+  lastFrame = now;
+  while (acc >= DT && running) { tick(DT); acc -= DT; }
+  render();
+  if (running) requestAnimationFrame(loop);
+}
+function stepOnce() { pause(); if (state.finished) return; $('overlay').hidden = true; tick(DT); if (!state.finished) tick(DT); render(true); }
+function updatePlayBtn() { const b = $('play'); if (b) b.innerHTML = running ? '❚❚ Pausar' : (state && state.t > 0 && !state.finished ? '▶ Continuar' : '▶ Reproducir'); }
+
+// ---------- Escena ----------
+const W = 1000, H = 640;
+const R_TOP = 200, R_BOT = 320, V_L = 460, V_R = 580;
+const LANE_A = 290, LANE_B = 550, STOP_A = 422, STOP_B = 358;
+const K_IN = (V_R - STOP_A) / BOX;
+const scene = $('scene'), ctx = scene.getContext('2d');
+let dpr = 1, sceneScale = 3;
+function setupCanvas() {
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  scene.width = W * dpr; scene.height = H * dpr;
+  sizeChart();
+}
+function approachScale() { return Math.min((STOP_A - 30) / Math.max(P.routeDistance, P.detectDistance), (H - STOP_B - 24) / Math.max(P.crossDistance, P.detectDistance), 6); }
+const ax = x => x >= 0 ? STOP_A - x * sceneScale : STOP_A - x * K_IN;
+const by = x => x >= 0 ? STOP_B + x * sceneScale : STOP_B + x * K_IN;
+const exitedView = c => c.k === 'route' ? ax(c.x) - c.len * K_IN > W + 20 : by(c.x) + c.len * K_IN < -20;
+
+function rr(x, y, w, h, r, fill) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fillStyle = fill; ctx.fill(); }
+function drawRoads() {
+  ctx.fillStyle = '#1d3a31'; ctx.fillRect(0, 0, W, H);
+  // veredas
+  ctx.fillStyle = '#3a4a52';
+  ctx.fillRect(0, R_TOP - 14, W, R_BOT - R_TOP + 28); ctx.fillRect(V_L - 14, 0, V_R - V_L + 28, H);
+  ctx.fillStyle = '#2b3138';
+  ctx.fillRect(0, R_TOP, W, R_BOT - R_TOP); ctx.fillRect(V_L, 0, V_R - V_L, H);
+  // centro de la esquina
+  ctx.fillStyle = state.conflict && !state.finished || (inBox(state.route) && inBox(state.cross)) ? 'rgba(255,90,95,.35)' : '#30373f';
+  ctx.fillRect(V_L, R_TOP, V_R - V_L, R_BOT - R_TOP);
+  // líneas centrales
+  ctx.strokeStyle = '#e8c766'; ctx.lineWidth = 3; ctx.setLineDash([22, 16]);
+  ctx.beginPath(); ctx.moveTo(0, 260); ctx.lineTo(V_L - 30, 260); ctx.moveTo(V_R + 30, 260); ctx.lineTo(W, 260);
+  ctx.moveTo(520, 0); ctx.lineTo(520, R_TOP - 30); ctx.moveTo(520, R_BOT + 30); ctx.lineTo(520, H); ctx.stroke(); ctx.setLineDash([]);
+  // sendas peatonales
+  ctx.fillStyle = 'rgba(255,255,255,.75)';
+  for (let y = R_TOP + 6; y < R_BOT - 4; y += 14) { ctx.fillRect(430, y, 24, 8); ctx.fillRect(V_R + 6, y, 24, 8); }
+  for (let x = V_L + 6; x < V_R - 4; x += 14) { ctx.fillRect(x, R_BOT + 6, 8, 24); ctx.fillRect(x, R_TOP - 30, 8, 24); }
+  // líneas de detención
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(STOP_A - 3, 262, 6, 56); ctx.fillRect(522, STOP_B - 3, 56, 6);
+  // etiquetas de calle
+  ctx.font = '700 15px Inter,Segoe UI,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.textAlign = 'left';
+  ctx.fillText('RUTA PRINCIPAL  →', 24, R_TOP - 44);
+  ctx.save(); ctx.translate(V_R + 84, H - 20); ctx.rotate(-Math.PI / 2); ctx.fillText('CALLE SECUNDARIA  →', 0, 0); ctx.restore();
+}
+function drawTicks() {
+  ctx.font = '600 11px Inter,Segoe UI,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.5;
+  const stepM = sceneScale > 4 ? 10 : sceneScale > 1.6 ? 20 : 50;
+  ctx.textAlign = 'center';
+  for (let m = stepM; ax(m) > 20; m += stepM) { const x = ax(m); ctx.beginPath(); ctx.moveTo(x, R_TOP - 2); ctx.lineTo(x, R_TOP - 10); ctx.stroke(); ctx.fillText(m + ' m', x, R_TOP - 16); }
+  ctx.textAlign = 'left';
+  ctx.textAlign = 'right';
+  for (let m = stepM; by(m) < H - 8; m += stepM) { const y = by(m); ctx.beginPath(); ctx.moveTo(V_L - 2, y); ctx.lineTo(V_L - 10, y); ctx.stroke(); ctx.fillText(m + ' m', V_L - 14, y + 4); }
+}
+function drawCamera() {
+  const d = P.detectDistance, xa = ax(d), yb = by(d);
+  ctx.strokeStyle = '#5ee7f0'; ctx.lineWidth = 2; ctx.setLineDash([6, 6]);
+  ctx.beginPath(); ctx.moveTo(xa, 262); ctx.lineTo(xa, R_BOT); ctx.moveTo(522, yb); ctx.lineTo(V_R, yb); ctx.stroke(); ctx.setLineDash([]);
+  const cam = (x, y) => { rr(x - 13, y - 9, 22, 16, 4, '#5ee7f0'); ctx.beginPath(); ctx.moveTo(x + 9, y - 4); ctx.lineTo(x + 15, y - 8); ctx.lineTo(x + 15, y + 6); ctx.lineTo(x + 9, y + 2); ctx.fill(); ctx.fillStyle = '#0b2530'; ctx.beginPath(); ctx.arc(x - 2, y - 1, 4, 0, 7); ctx.fill(); };
+  if (xa > 14) { cam(xa, 246); ctx.fillStyle = '#5ee7f0'; ctx.font = '700 11px Inter,Segoe UI,sans-serif'; ctx.textAlign = 'center'; ctx.fillText('CÁMARA', xa, 230); }
+  if (yb < H - 10) { cam(505, yb); }
+}
+function drawStopBand(car) {
+  if (!$('showStop').checked || car.x <= 0 || car.v < 0.3 || car.crossed) return;
+  const need = stopNeed(car), end = car.x - need, ok = end >= 0;
+  const col = ok ? 'rgba(52,211,153,' : 'rgba(255,90,95,';
+  ctx.fillStyle = col + '.28)'; ctx.strokeStyle = col + '.95)'; ctx.lineWidth = 3;
+  if (car.k === 'route') {
+    const x0 = ax(car.x), x1 = ax(Math.max(end, -BOX));
+    ctx.fillRect(x0, LANE_A - 12, x1 - x0, 24);
+    ctx.beginPath(); ctx.moveTo(x1, LANE_A - 16); ctx.lineTo(x1, LANE_A + 16); ctx.stroke();
+  } else {
+    const y0 = by(car.x), y1 = by(Math.max(end, -BOX));
+    ctx.fillRect(LANE_B - 12, y1, 24, y0 - y1);
+    ctx.beginPath(); ctx.moveTo(LANE_B - 16, y1); ctx.lineTo(LANE_B + 16, y1); ctx.stroke();
+  }
+}
+// Vehículo dibujado con el frente en el origen, mirando hacia +x.
+function drawVehicle(car, color) {
+  const isA = car.k === 'route', px = isA ? ax(car.x) : LANE_B, py = isA ? LANE_A : by(car.x);
+  const len = car.len * K_IN * 0.95, wd = {moto: 9, auto: 20, camion: 25, omnibus: 25}[car.type];
+  ctx.save(); ctx.translate(px, py); ctx.rotate(isA ? 0 : -Math.PI / 2);
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(-len / 2 + 2, 4, len / 2 + 2, wd / 2 + 2, 0, 0, 7); ctx.fill();
+  if (car.type === 'moto') {
+    rr(-len, -2, len, 4, 2, '#222'); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(-len + 4, 0, 4, 0, 7); ctx.arc(-3, 0, 4, 0, 7); ctx.fill();
+    rr(-len + 5, -wd / 2, len - 9, wd, 4, color); ctx.fillStyle = '#f2c79a'; ctx.beginPath(); ctx.arc(-len / 2, 0, 3.5, 0, 7); ctx.fill();
+  } else {
+    rr(-len, -wd / 2, len, wd, car.type === 'auto' ? 6 : 4, color);
+    ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(-len + 3, -wd / 2 + 2, len - 6, 3);
+    if (car.type === 'auto') { rr(-len * 0.42, -wd / 2 + 3, len * 0.2, wd - 6, 3, '#9fd8f0'); rr(-len * 0.85, -wd / 2 + 3, len * 0.13, wd - 6, 2, '#5b7f96'); }
+    else if (car.type === 'camion') { rr(-len + 2, -wd / 2 + 2, len * 0.68, wd - 4, 3, '#dfe6ec'); rr(-len * 0.2, -wd / 2 + 4, len * 0.12, wd - 8, 2, '#9fd8f0'); }
+    else { for (let i = 0; i < 6; i++) rr(-len + 6 + i * (len - 18) / 6, -wd / 2 + 3, (len - 24) / 6, wd - 6, 2, '#9fd8f0'); rr(-9, -wd / 2 + 3, 6, wd - 6, 2, '#d6eef8'); }
+    ctx.fillStyle = '#fff6c2'; ctx.fillRect(-3, -wd / 2 + 2, 3, 5); ctx.fillRect(-3, wd / 2 - 7, 3, 5);
+    ctx.fillStyle = car.braking ? '#ff2b2b' : '#8a2a2a'; ctx.fillRect(-len, -wd / 2 + 2, 3, 5); ctx.fillRect(-len, wd / 2 - 7, 3, 5);
+    if (car.braking && car.v > 0.05) { ctx.fillStyle = 'rgba(255,40,40,.35)'; ctx.beginPath(); ctx.arc(-len, 0, wd * 0.7, 0, 7); ctx.fill(); }
+  }
+  ctx.restore();
+  // etiqueta
+  const label = `${NAMES[car.k]} · ${fmt(kmh(car.v), 0)} km/h`;
+  ctx.font = '700 13px Inter,Segoe UI,sans-serif';
+  const tw = ctx.measureText(label).width + 16;
+  let lx = isA ? px - len / 2 : px + 22, ly = isA ? py - 34 : py + len / 2 - 11;
+  if (isA) lx = Math.min(W - tw / 2 - 4, Math.max(tw / 2 + 4, lx)); else ly = Math.min(H - 26, Math.max(4, ly));
+  const bx = isA ? lx - tw / 2 : lx;
+  rr(bx, ly, tw, 22, 11, color);
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.fillText(label, bx + 8, ly + 15.5);
+}
+function drawLight(x, y, sig, label) {
+  ctx.fillStyle = '#0d1520'; ctx.beginPath(); ctx.roundRect(x - 13, y - 38, 26, 76, 8); ctx.fill();
+  ['ROJO', 'AMARILLO', 'VERDE'].forEach((c, i) => {
+    const on = c === sig, col = ['#ff4d55', '#ffcc33', '#2fe08a'][i];
+    ctx.beginPath(); ctx.arc(x, y - 23 + i * 23, 8.5, 0, 7);
+    ctx.fillStyle = on ? col : '#26313d'; ctx.shadowColor = on ? col : 'transparent'; ctx.shadowBlur = on ? 14 : 0; ctx.fill(); ctx.shadowBlur = 0;
+  });
+  ctx.font = '800 12px Inter,Segoe UI,sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.fillText(label, x, y + 54);
+}
+function drawSign(x, y) {
+  const active = state.warnActive, on = active && (Math.floor(state.t * 4) % 2 === 0 || matchMedia('(prefers-reduced-motion: reduce)').matches);
+  ctx.save(); ctx.translate(x, y);
+  rr(-40, -40, 80, 80, 12, '#0d1520');
+  if (on) { ctx.shadowColor = '#ffd43b'; ctx.shadowBlur = 30; }
+  ctx.globalAlpha = active ? (on ? 1 : 0.35) : 0.25;
+  ctx.beginPath(); ctx.moveTo(0, -27); ctx.lineTo(30, 24); ctx.lineTo(-30, 24); ctx.closePath(); ctx.fillStyle = '#ffd43b'; ctx.fill();
+  ctx.shadowBlur = 0; ctx.fillStyle = '#1a1300'; rr(-3.5, -10, 7, 20, 3, '#1a1300'); ctx.beginPath(); ctx.arc(0, 17, 4, 0, 7); ctx.fill();
+  ctx.restore();
+  ctx.font = '800 12px Inter,Segoe UI,sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = active ? '#ffd43b' : 'rgba(255,255,255,.6)';
+  ctx.fillText(active ? '¡AVISO SAI!' : 'AVISO SAI', x, y + 58);
+}
+function drawScene() {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawRoads(); drawTicks(); drawCamera();
+  drawStopBand(state.route); drawStopBand(state.cross);
+  const ph = curPhase();
+  drawVehicle(state.cross, '#2f7de1'); drawVehicle(state.route, '#e5484d');
+  drawLight(398, 372, signal(ph, 'route'), 'A'); drawLight(626, 400, signal(ph, 'cross'), 'B');
+  drawSign(680, 110);
+  ctx.font = '500 11px Inter,Segoe UI,sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(255,255,255,.45)';
+  ctx.fillText('Vista esquemática · distancias de aproximación comprimidas', 14, H - 12);
+}
+
+// ---------- Gráfico ----------
+const chart = $('chart'), g = chart.getContext('2d');
+let CW = 1000, CH = 280;
+function sizeChart() { CW = Math.max(300, chart.clientWidth || 1000); CH = 280; chart.width = CW * dpr; chart.height = CH * dpr; }
+function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function drawChart() {
+  g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, CW, CH);
+  const L = 44, R = CW - 12, T = 10, B = CH - 54, data = history;
+  const maxT = Math.max(10, state.t), maxV = Math.max(40, ...data.map(d => Math.max(d.a, d.b))) * 1.1;
+  const X = t => L + t / maxT * (R - L), Y = v => B - v / maxV * (B - T);
+  const grid = cssVar('--border'), txt = cssVar('--text-3');
+  g.font = '500 11px Inter,Segoe UI,sans-serif'; g.fillStyle = txt; g.strokeStyle = grid; g.lineWidth = 1; g.textAlign = 'right';
+  const vStep = maxV > 120 ? 40 : 20;
+  for (let v = 0; v <= maxV; v += vStep) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(R, Y(v)); g.stroke(); g.fillText(v, L - 6, Y(v) + 4); }
+  g.textAlign = 'center';
+  const tStep = maxT > 60 ? 10 : maxT > 25 ? 5 : 2;
+  for (let t = 0; t <= maxT; t += tStep) g.fillText(t + ' s', X(t), CH - 4);
+  g.save(); g.translate(12, (T + B) / 2); g.rotate(-Math.PI / 2); g.fillText('km/h', 0, 0); g.restore();
+  // franjas de semáforo
+  const colors = {VERDE: cssVar('--green'), AMARILLO: cssVar('--yellow'), ROJO: cssVar('--red')};
+  [['sa', B + 12, 'A'], ['sb', B + 24, 'B']].forEach(([key, y, lab]) => {
+    for (let i = 0; i < data.length - 1; i++) { g.fillStyle = colors[data[i][key]]; g.fillRect(X(data[i].t), y, X(data[i + 1].t) - X(data[i].t) + 0.5, 8); }
+    g.fillStyle = txt; g.textAlign = 'right'; g.fillText(lab, L - 6, y + 8);
+  });
+  const mark = (t, col, text) => { if (t === null) return; g.strokeStyle = col; g.lineWidth = 1.5; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(X(t), T); g.lineTo(X(t), B); g.stroke(); g.setLineDash([]); g.fillStyle = col; g.textAlign = 'left'; g.font = '700 11px Inter,Segoe UI,sans-serif'; g.fillText(text, X(t) + 4, T + 10); };
+  mark(state.alertAt, colors.AMARILLO, 'Aviso SAI');
+  mark(state.conflictAt, colors.ROJO, 'Posible choque');
+  [['a', cssVar('--a')], ['b', cssVar('--b')]].forEach(([k, col]) => {
+    g.strokeStyle = col; g.lineWidth = 2.5; g.lineJoin = 'round'; g.beginPath();
+    data.forEach((d, i) => i ? g.lineTo(X(d.t), Y(d[k])) : g.moveTo(X(d.t), Y(d[k]))); g.stroke();
+  });
+}
+
+// ---------- Paneles ----------
+function vehCardHTML(k) {
+  return `<div class="vehhead"><span class="tag ${NAMES[k]}">${NAMES[k]}</span><div><h3>${k === 'route' ? 'Ruta principal' : 'Calle secundaria'}</h3><p id="${k}TypeLbl"></p></div><span class="lightchip" id="${k}Chip"><i></i><em></em></span></div>
+  <div class="big"><strong id="${k}V">0</strong><span>km/h</span></div>
+  <p class="state" id="${k}State"></p>
+  <div class="meter"><div class="lbl"><span>Distancia a la línea: <b id="${k}X"></b></span><span>Necesita para frenar: <b id="${k}Need"></b></span></div>
+  <div class="bar" id="${k}Bar"><i></i></div><div class="verdict" id="${k}Verdict"></div></div>
+  <dl class="kv"><div><dt>Llega a la línea en</dt><dd id="${k}Eta">—</dd></div><div><dt>Su semáforo cambia en</dt><dd id="${k}Light">—</dd></div></dl>
+  <div class="vehactions"><button class="ghost" type="button" data-brake="${k}">🛑 Frenar ya</button><button class="ghost" type="button" data-go="${k}">▶ Soltar freno</button></div>`;
+}
+function carState(car, sig) {
+  if (car.cleared) return car.crossSig === 'ROJO' ? 'Ya pasó (cruzó en rojo)' : 'Ya pasó la esquina';
+  if (car.x <= 0) return car.v < 0.05 ? 'Detenido dentro de la esquina' : 'Cruzando la esquina';
+  if (car.v < 0.05) return sig === 'VERDE' ? 'Arrancando' : `Esperando el verde a ${fmt(car.x)} m`;
+  if (car.braking) return car.reason === 'sai' ? 'Frenando por el aviso SAI' : 'Frenando';
+  if (car.brakeAt !== null) return `Por frenar (reacciona en ${fmt(car.brakeAt - state.t)} s)`;
+  if (car.goOnYellow) return 'Sigue con amarillo';
+  return 'Avanzando';
+}
+function timeToChange(k) {
+  // segundos hasta que cambie el color del semáforo de k
+  const s = state, cur = signal(curPhase(), k);
+  let t = s.p[s.phaseIdx][1] - s.phaseElapsed;
+  for (let i = 1; i <= s.p.length; i++) { const ph = s.p[(s.phaseIdx + i) % s.p.length]; if (signal(ph[0], k) !== cur) return t; t += ph[1]; }
+  return Infinity;
+}
+let logDirty = true;
+function render(force) {
+  const s = state, ph = curPhase();
+  $('clock').textContent = fmt(s.t) + ' s';
+  $('phaseLeft').textContent = fmt(Math.max(0, s.p[s.phaseIdx][1] - s.phaseElapsed)) + ' s';
+  for (const k of ['route', 'cross']) {
+    const car = s[k], sig = signal(ph, k), t = TYPES[car.type];
+    const chip = $(k === 'route' ? 'chipA' : 'chipB'); chip.className = 'lightchip ' + sig; chip.querySelector('em').textContent = sig;
+    const c2 = $(k + 'Chip'); c2.className = 'lightchip ' + sig; c2.querySelector('em').textContent = sig;
+    $(k + 'TypeLbl').textContent = `${t.emo} ${t.name} · ${k === 'route' ? 'va hacia la derecha →' : 'va hacia arriba ↑'}`;
+    $(k + 'V').textContent = fmt(kmh(car.v), 0);
+    $(k + 'State').textContent = carState(car, sig);
+    const need = stopNeed(car), bar = $(k + 'Bar'), ver = $(k + 'Verdict');
+    $(k + 'X').textContent = car.x > 0 ? fmt(car.x, 0) + ' m' : 'pasó';
+    $(k + 'Need').textContent = car.v > 0.05 ? fmt(need, 0) + ' m' : '0 m';
+    if (car.x > 0 && !car.crossed) {
+      const ok = need <= car.x;
+      bar.className = 'bar' + (ok ? '' : ' bad');
+      bar.querySelector('i').style.width = Math.min(100, need / car.x * 100) + '%';
+      ver.className = 'verdict ' + (car.v < 0.05 ? 'neutral' : ok ? 'good' : 'bad');
+      ver.textContent = car.v < 0.05 ? 'Detenido' : ok ? '✓ Si frena ahora, se detiene antes de la línea' : '✗ Aunque frene ahora, no llega a detenerse';
+    } else { bar.className = 'bar'; bar.querySelector('i').style.width = '0%'; ver.className = 'verdict neutral'; ver.textContent = 'Ya pasó la línea'; }
+    $(k + 'Eta').textContent = car.x <= 0 ? 'Ya pasó' : car.v > 0.1 ? fmt(car.x / car.v) + ' s' : 'Detenido';
+    $(k + 'Light').textContent = `${fmt(timeToChange(k))} s`;
+  }
+  // SAI
+  const st = $('saiState');
+  if (s.warnActive) { st.className = 'saistate alert'; st.lastChild.textContent = '¡Aviso encendido!'; $('saiText').textContent = `${LONG[s.threat]} se va a pasar en rojo.`; }
+  else if (s.warnPending !== null) { st.className = 'saistate pending'; st.lastChild.textContent = 'Analizando…'; $('saiText').textContent = 'Detectó un posible riesgo y está procesando.'; }
+  else { st.className = 'saistate idle'; st.lastChild.textContent = 'Vigilando'; $('saiText').textContent = s.alertAt !== null ? 'El riesgo terminó.' : 'No hay riesgo detectado.'; }
+  $('saiAt').textContent = s.alertAt === null ? '—' : fmt(s.alertAt) + ' s';
+  $('saiLead').textContent = s.alertLead === null ? '—' : fmt(s.alertLead) + ' s antes';
+  $('saiResp').textContent = s.respPending ? `En ${fmt(s.respPending.at - s.t)} s` : s.respAt !== null ? `Frenó (${fmt(s.respAt)} s)` : P.saiResponse === 'off' ? 'Ninguna' : '—';
+  const cf = $('saiConflict'); cf.textContent = s.conflict ? `Sí (${fmt(s.conflictAt)} s)` : 'No'; cf.style.color = s.conflict ? 'var(--red)' : '';
+  narrate();
+  drawScene(); drawChart();
+  if (logDirty || force) renderLog();
+  updatePlayBtn();
+}
+function narrate() {
+  const s = state, ph = curPhase(), n = $('narrator');
+  let ico = '💡', title, text, cls = '';
+  const desc = k => { const c = s[k]; return `${NAMES[k]} ${carState(c, signal(ph, k)).toLowerCase()} (${signal(ph, k).toLowerCase()})`; };
+  if (s.finished) { ico = '🏁'; title = 'Simulación terminada'; text = 'Mirá el resumen debajo o tocá Reproducir para verla de nuevo.'; }
+  else if (s.conflict && (inBox(s.route) || inBox(s.cross))) { ico = '💥'; cls = 'danger'; title = '¡Posible choque!'; text = 'Los dos vehículos están dentro de la esquina al mismo tiempo.'; }
+  else if (s.warnActive) { ico = '⚠️'; cls = 'danger'; title = 'El SAI encendió el aviso'; text = `${LONG[s.threat]} no llega a frenar ante el rojo. ` + (s.respKey ? `${LONG[s.respKey]} está frenando.` : s.respPending ? `${LONG[s.respPending.k]} está por reaccionar…` : P.saiResponse === 'off' ? 'El otro conductor no reacciona.' : ''); }
+  else if (s.warnPending !== null) { ico = '🔎'; cls = 'warn'; title = 'El SAI detectó un posible riesgo'; text = 'Está procesando la información de la cámara…'; }
+  else if (s.t === 0) { title = 'Listo para empezar'; text = `Tocá Reproducir. Arranca con ${PHASE_TEXT[ph]}. La franja frente a cada vehículo muestra dónde se detendría si frenara ahora.`; }
+  else { ico = running ? '🚦' : '⏸'; title = running ? 'En curso' : 'En pausa'; text = `${desc('route')} · ${desc('cross')}.`; }
+  n.className = 'narrator ' + cls; $('narrIco').textContent = ico; $('narrTitle').textContent = title; $('narrText').textContent = text;
+}
+const LOG_LEVEL_DEFAULT = {Semáforo: 'light', Cámara: 'light'};
+function renderLog() {
+  logDirty = false;
+  $('logCount').textContent = events.length;
+  $('logBody').innerHTML = events.length ? events.slice(0, 200).map(e => `<tr><td>${fmt(e.t)} s</td><td><span class="chip ${e.level || LOG_LEVEL_DEFAULT[e.type] || ''}">${e.type}</span></td><td class="wrap">${e.detail}</td></tr>`).join('') : '<tr><td colspan="3" class="empty">Todavía no pasó nada.</td></tr>';
+}
+function renderBrakeTable() {
+  const cur = state ? Math.round(kmh(state.route.v) / 10) * 10 : Math.round(P.routeSpeed / 10) * 10;
+  const rows = [];
+  for (let v = 20; v <= 140; v += 10) {
+    const ms = v / 3.6, ra = P.routeReaction, ba = P.routeBrake, rb = P.crossReaction, bb = P.crossBrake;
+    rows.push(`<tr class="${v === cur ? 'hl' : ''}"><td><b>${v} km/h</b></td><td>${fmt(ms * ra, 0)} m</td><td>${fmt(ms * ms / (2 * ba), 0)} m</td><td><b>${fmt(theoryStop(v, ra, ba), 0)} m</b></td><td>${fmt(ms * rb, 0)} m</td><td>${fmt(ms * ms / (2 * bb), 0)} m</td><td><b>${fmt(theoryStop(v, rb, bb), 0)} m</b></td></tr>`);
+  }
+  $('brakeBody').innerHTML = rows.join('');
+}
+
+// ---------- Utilidades ----------
+let toastTimer;
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+function exportCSV() {
+  const rows = [['parametro', 'valor'], ...Object.entries(P), [], ['tiempo_s', 'tipo', 'detalle'], ...events.slice().reverse().map(e => [fmt(e.t, 2), e.type, e.detail]), [], ['tiempo_s', 'velocidad_A_kmh', 'velocidad_B_kmh', 'semaforo_A', 'semaforo_B'], ...history.map(h => [fmt(h.t, 2), fmt(h.a, 2), fmt(h.b, 2), h.sa, h.sb])];
+  const csv = '﻿' + rows.map(r => r.map(v => '"' + String(v ?? '').replaceAll('"', '""') + '"').join(';')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+  a.download = 'SAI_simulacion_' + new Date().toISOString().slice(0, 19).replaceAll(':', '-') + '.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('Se descargó el archivo CSV.');
+}
+function applyTheme(t) { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; if (state) render(true); }
+
+// ---------- Inicio ----------
+buildScenarios(); buildParams();
+$('cardA').innerHTML = vehCardHTML('route'); $('cardB').innerHTML = vehCardHTML('cross');
+wireParams();
+setupCanvas();
+loadScenario('normal', false);
+
+$('play').onclick = toggle; $('overlay').onclick = play; $('step').onclick = stepOnce; $('reset').onclick = reset;
+$('resAgain').onclick = () => { reset(); play(); };
+$('resNext').onclick = () => { const i = SCENARIOS.findIndex(s => s.id === currentScenario); loadScenario(SCENARIOS[(i + 1) % SCENARIOS.length].id, true); window.scrollTo({top: $('scenarios').offsetTop - 12, behavior: 'smooth'}); };
+$('showStop').onchange = () => render();
+$('speedSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; speed = +b.dataset.v; $('speedSeg').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-brake],[data-go]'); if (!b) return;
+  const car = state[b.dataset.brake || b.dataset.go];
+  if (b.dataset.brake) { brakeFor(car, 'manual', true); log('Frenado manual', `Frenaste a ${LONG[car.k]}.`, 'warn'); }
+  else { release(car); log('Control', `Soltaste el freno de ${LONG[car.k]}.`); }
+  render(true);
+});
+$('exportBtn').onclick = exportCSV;
+$('restoreBtn').onclick = () => { loadScenario('normal', false); toast('Se restablecieron los valores originales.'); };
+$('helpBtn').onclick = () => $('help').showModal();
+$('themeBtn').onclick = () => { const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; const t = dark ? 'light' : 'dark'; applyTheme(t); try { localStorage.setItem('sai-theme', t); } catch (e) {} };
+try { const t = localStorage.getItem('sai-theme'); if (t) applyTheme(t); } catch (e) {}
+try { if (!localStorage.getItem('sai-seen')) { $('help').showModal(); localStorage.setItem('sai-seen', '1'); } } catch (e) {}
+document.querySelectorAll('[role=tab]').forEach(tab => tab.addEventListener('click', () => {
+  document.querySelectorAll('[role=tab]').forEach(t => { t.setAttribute('aria-selected', t === tab); $(t.getAttribute('aria-controls')).hidden = t !== tab; });
+  if (tab.id === 't-chart') { sizeChart(); render(true); }
+}));
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,select,textarea') || $('help').open) return;
+  if (e.code === 'Space') { e.preventDefault(); toggle(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); stepOnce(); }
+  else if (e.key === 'r' || e.key === 'R') reset();
+});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => render(true));
+let rsz; window.addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => { setupCanvas(); render(true); }, 120); });
+</script>
+</body>
+</html>
