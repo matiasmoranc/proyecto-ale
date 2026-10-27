@@ -60,7 +60,7 @@ button{cursor:pointer}
 .step + .step::before{content:"";width:22px;height:2px;background:var(--border);margin-right:2px}
 
 /* Scenario cards */
-.scenarios{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.scenarios{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .scenario{text-align:left;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 14px 13px;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,transform .15s,box-shadow .15s}
 .scenario:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow)}
 .scenario[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
@@ -228,7 +228,7 @@ dialog::backdrop{background:rgba(6,12,22,.55)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0f1b2d;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:calc(100% - 32px);text-align:center;z-index:10}
 .toast.show{opacity:1;transform:translateX(-50%)}
 
-@media (max-width:1180px){.scenarios{grid-template-columns:repeat(2,minmax(0,1fr))}.status{grid-template-columns:1fr 1fr}.status .sai{grid-column:1/-1}}
+@media (max-width:1180px){.scenarios{grid-template-columns:repeat(3,minmax(0,1fr))}.status{grid-template-columns:1fr 1fr}.status .sai{grid-column:1/-1}}
 @media (max-width:1000px){.layout{grid-template-columns:1fr}.params{position:static;max-height:none}}
 @media (max-width:640px){
   .wrap{padding:0 16px}
@@ -369,7 +369,7 @@ dialog::backdrop{background:rgba(6,12,22,.55)}
         <div><h3>📏 Distancia para detenerse</h3><p>Distancia total = reacción + frenado = <span class="formula">v·t</span> + <span class="formula">v²/(2a)</span>. Si es mayor que la distancia a la línea, el vehículo no llega a frenar a tiempo.</p></div>
         <div><h3>📷 Qué hace el SAI</h3><p>Una cámara detecta al vehículo. Si tiene luz roja, va a llegar a la línea dentro del tiempo de anticipación y ya no puede frenar, el SAI enciende el aviso ⚠ para el otro conductor, que tiene luz verde.</p></div>
         <div><h3>💥 Qué se considera “choque posible”</h3><p>Que los dos vehículos estén dentro del cuadrado central de la intersección al mismo tiempo. Es un indicador simplificado, no una reconstrucción de un choque real.</p></div>
-        <div><h3>🟡 Semáforos y conductores</h3><p>Con amarillo, si el conductor puede frenar, frena; si no, sigue. Con rojo intenta frenar. Al volver el verde, arranca de nuevo. Podés desactivar este comportamiento para simular un conductor distraído.</p></div>
+        <div><h3>🟡 Semáforos y conductores</h3><p>Con amarillo, si el conductor puede frenar, frena; si no, sigue. Con rojo intenta frenar. Al volver el verde, arranca de nuevo. En cada vehículo podés apagar “Respeta el semáforo” (conductor distraído) o poner la fuerza de frenado en 0 para simular una falla de frenos.</p></div>
         <div><h3>⚠️ Límites</h3><p>Valores hipotéticos y ajustables, cámara ideal sin errores, vista no a escala. Sirve para aprender y comparar, <b>no</b> para definir tiempos semafóricos reales ni operar alarmas en la vía pública.</p></div>
       </div>
     </div>
@@ -414,7 +414,8 @@ const BOX_START = 3;  // senda peatonal entre la línea y el cuadrado central
 const vehicleFields = p => [
   {id: p + 'Speed', label: 'Velocidad', unit: 'km/h', min: 0, max: 140, step: 1, d: 0, live: true, hint: 'Velocidad a la que quiere circular.'},
   {id: p + 'Distance', label: 'Distancia a la esquina al empezar', unit: 'm', min: 20, max: 200, step: 5, d: 0, hint: 'Cuán lejos de la línea de detención arranca.'},
-  {id: p + 'Brake', label: 'Fuerza de frenado', unit: 'm/s²', min: 1, max: 9, step: 0.5, d: 1, live: true, hint: 'Auto en seco ≈ 6–7 · camión ≈ 4 · piso mojado ≈ 3–4.'},
+  {id: p + 'Obeys', label: 'Respeta el semáforo', type: 'toggle', live: true, hint: 'Apagalo para simular un conductor distraído que no frena ante el amarillo o el rojo.'},
+  {id: p + 'Brake', label: 'Fuerza de frenado', unit: 'm/s²', min: 0, max: 9, step: 0.5, d: 1, live: true, hint: 'Auto en seco ≈ 6–7 · camión ≈ 4 · piso mojado ≈ 3–4. <b>En 0 = sin frenos</b> (falla de frenos): no puede detenerse de ninguna forma.'},
   {id: p + 'Reaction', label: 'Reacción ante el semáforo', unit: 's', min: 0, max: 3, step: 0.1, d: 1, live: true, hint: 'Lo típico es entre 1 y 1,5 s.'},
   {id: p + 'AlertReaction', label: 'Reacción ante el aviso SAI', unit: 's', min: 0, max: 4, step: 0.1, d: 1, live: true, hint: 'Cuánto tarda en frenar al ver el aviso ⚠ (si tiene verde).'}
 ];
@@ -427,8 +428,7 @@ const GROUPS = [
     {id: 'routeYellow', label: 'Amarillo para A', unit: 's', min: 1, max: 8, step: 0.5, d: 1},
     {id: 'crossGreen', label: 'Verde para B', unit: 's', min: 3, max: 60, step: 1, d: 0},
     {id: 'crossYellow', label: 'Amarillo para B', unit: 's', min: 1, max: 8, step: 0.5, d: 1},
-    {id: 'allRed', label: 'Rojo total (ambos)', unit: 's', min: 0, max: 6, step: 0.5, d: 1, hint: 'Pausa de seguridad para despejar la esquina.'},
-    {id: 'autoBrake', label: 'Los conductores respetan el semáforo', type: 'toggle', live: true, hint: 'Apagalo para simular un conductor distraído que no frena.'}
+    {id: 'allRed', label: 'Rojo total (ambos)', unit: 's', min: 0, max: 6, step: 0.5, d: 1, hint: 'Pausa de seguridad para despejar la esquina.'}
   ]},
   {key: 'sai', tag: '⚠', title: 'Sistema SAI', open: false, fields: [
     {id: 'saiResponse', label: 'Cuando se enciende el aviso, el conductor con verde…', type: 'select', live: true, options: [['brake', 'Frena'], ['off', 'No hace nada (solo se muestra)']]},
@@ -439,17 +439,19 @@ const GROUPS = [
 ];
 const DEFAULTS = {routeType: 'auto', crossType: 'auto', routeSpeed: 70, routeDistance: 110, routeBrake: 5, routeReaction: 1.2, routeAlertReaction: 1.2,
   crossSpeed: 45, crossDistance: 90, crossBrake: 5, crossReaction: 1, crossAlertReaction: 1, phaseStart: 'routeGreen', routeGreen: 12, routeYellow: 3,
-  crossGreen: 10, crossYellow: 3, allRed: 2, autoBrake: true, saiResponse: 'brake', detectDistance: 80, systemDelay: 0.3, warningWindow: 5};
+  crossGreen: 10, crossYellow: 3, allRed: 2, routeObeys: true, crossObeys: true, saiResponse: 'brake', detectDistance: 80, systemDelay: 0.3, warningWindow: 5};
 
 const SCENARIOS = [
   {id: 'normal', emo: '✅', title: 'Todo en orden', desc: 'Cada uno respeta su semáforo. B espera en rojo y cruza con verde.',
-    v: {routeSpeed: 50, routeDistance: 110, crossSpeed: 40, crossDistance: 80, phaseStart: 'routeGreen', routeGreen: 10, autoBrake: true, saiResponse: 'brake'}},
+    v: {routeSpeed: 50, routeDistance: 110, crossSpeed: 40, crossDistance: 80, phaseStart: 'routeGreen', routeGreen: 10, saiResponse: 'brake'}},
   {id: 'redrun', emo: '💥', title: 'Cruce en rojo sin aviso', desc: 'A viene rápido y distraído. El SAI avisa, pero B no reacciona.',
-    v: {routeSpeed: 90, routeDistance: 75, crossSpeed: 40, crossDistance: 38, phaseStart: 'crossGreen', autoBrake: false, saiResponse: 'off'}},
+    v: {routeSpeed: 90, routeDistance: 75, crossSpeed: 40, crossDistance: 38, phaseStart: 'crossGreen', routeObeys: false, saiResponse: 'off'}},
   {id: 'saved', emo: '🛡️', title: 'El SAI evita el choque', desc: 'La misma situación, pero B frena al ver el aviso ⚠.',
-    v: {routeSpeed: 90, routeDistance: 75, crossSpeed: 40, crossDistance: 38, phaseStart: 'crossGreen', autoBrake: false, saiResponse: 'brake'}},
+    v: {routeSpeed: 90, routeDistance: 75, crossSpeed: 40, crossDistance: 38, phaseStart: 'crossGreen', routeObeys: false, saiResponse: 'brake'}},
   {id: 'late', emo: '🛑', title: 'Frenó demasiado tarde', desc: 'A intenta frenar ante el rojo, pero va muy rápido y no le alcanza.',
-    v: {routeSpeed: 85, routeDistance: 65, crossSpeed: 45, crossDistance: 70, phaseStart: 'crossGreen', autoBrake: true, saiResponse: 'brake'}}
+    v: {routeSpeed: 85, routeDistance: 65, crossSpeed: 45, crossDistance: 70, phaseStart: 'crossGreen', saiResponse: 'brake'}},
+  {id: 'nobrakes', emo: '🚌', title: 'Ómnibus sin frenos', desc: 'A es un ómnibus con falla de frenos: no puede detenerse ante el rojo. ¿Lo salva el aviso?',
+    v: {routeType: 'omnibus', routeSpeed: 60, routeDistance: 120, routeBrake: 0, crossSpeed: 40, crossDistance: 85, phaseStart: 'crossGreen', saiResponse: 'brake'}}
 ];
 
 const P = {}; // valores actuales
@@ -471,19 +473,21 @@ function fieldHTML(f) {
   if (f.type === 'toggle') return `<div class="field"><label class="toggle" style="justify-content:flex-start;color:var(--text);font-weight:600"><input type="checkbox" id="${f.id}"> ${f.label}</label>${f.hint ? `<small>${f.hint}</small>` : ''}</div>`;
   return `<div class="field"><label for="${f.id}"><span>${f.label}${r}</span><output id="${f.id}Out"></output></label><input type="range" id="${f.id}" min="${f.min}" max="${f.max}" step="${f.step}">${f.hint ? `<small>${f.hint}</small>` : ''}</div>`;
 }
+const outText = (id, v) => id.endsWith('Brake') && +v <= 0 ? 'Sin frenos' : fmt(+v, FIELD[id].d) + ' ' + FIELD[id].unit;
+const noBrakes = k => P[k + 'Brake'] <= 0;
 function writeInputs() {
   for (const [id, f] of Object.entries(FIELD)) {
     const el = $(id);
     if (!el) continue;
     if (f.type === 'toggle') el.checked = !!P[id]; else el.value = P[id];
-    if ($(id + 'Out')) $(id + 'Out').textContent = fmt(+P[id], f.d) + ' ' + f.unit;
+    if ($(id + 'Out')) $(id + 'Out').textContent = outText(id, P[id]);
   }
   document.querySelectorAll('.typegrid').forEach(gr => gr.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === P[gr.dataset.type + 'Type'])));
 }
 function onParam(id, value) {
   P[id] = value;
   const f = FIELD[id];
-  if ($(id + 'Out')) $(id + 'Out').textContent = fmt(+value, f.d) + ' ' + f.unit;
+  if ($(id + 'Out')) $(id + 'Out').textContent = outText(id, value);
   markCustom();
   renderBrakeTable();
   if (!f.live) {
@@ -492,6 +496,7 @@ function onParam(id, value) {
     if (wasRunning) toast('Cambiaste un valor inicial: el escenario volvió al comienzo.');
   } else if (state) {
     if (id === 'routeType' || id === 'crossType') { const k = id.replace('Type', ''); state[k].type = value; state[k].len = TYPES[value].len; }
+    if (/Brake$/.test(id) && noBrakes(id.replace('Brake', ''))) log('Sin frenos', `${LONG[id.replace('Brake', '')]} se quedó sin frenos.`, 'danger');
     if (id === 'routeSpeed' || id === 'crossSpeed') { const k = id.replace('Speed', ''); log('Ajuste', `${LONG[k]} ahora quiere ir a ${fmt(+value, 0)} km/h.`); }
     render();
   }
@@ -503,7 +508,7 @@ function wireParams() {
     if (f.type === 'toggle') el.addEventListener('change', () => onParam(id, el.checked));
     else if (f.type === 'select') el.addEventListener('change', () => onParam(id, el.value));
     else {
-      el.addEventListener('input', () => { if (f.live) onParam(id, +el.value); else { P[id] = +el.value; $(id + 'Out').textContent = fmt(+el.value, f.d) + ' ' + f.unit; } });
+      el.addEventListener('input', () => { if (f.live) onParam(id, +el.value); else { P[id] = +el.value; $(id + 'Out').textContent = outText(id, el.value); } });
       if (!f.live) el.addEventListener('change', () => onParam(id, +el.value));
     }
   }
@@ -559,6 +564,7 @@ function newCar(k) {
 }
 // Distancia que necesita para detenerse teniendo en cuenta si ya está frenando.
 function stopNeed(car) {
+  if (noBrakes(car.k) && car.v > 0.05) return Infinity;
   const a = Math.max(0.1, P[car.k + 'Brake']), v = car.v;
   if (car.braking) return v * v / (2 * a);
   const react = car.brakeAt !== null ? Math.max(0, car.brakeAt - state.t) : P[car.k + 'Reaction'];
@@ -566,7 +572,7 @@ function stopNeed(car) {
   const vt = Math.min(P[car.k + 'Speed'] / 3.6, v + (v < P[car.k + 'Speed'] / 3.6 ? ACCEL * react : 0));
   return (v + vt) / 2 * react + vt * vt / (2 * a);
 }
-function theoryStop(kmhV, reaction, a) { const v = kmhV / 3.6; return v * reaction + v * v / (2 * Math.max(0.1, a)); }
+function theoryStop(kmhV, reaction, a) { if (a <= 0) return Infinity; const v = kmhV / 3.6; return v * reaction + v * v / (2 * Math.max(0.1, a)); }
 const inBox = car => car.x <= -BOX_START && car.x >= -(BOX + car.len);
 
 function log(type, detail, level = '') {
@@ -608,9 +614,10 @@ function tick(dt) {
     const car = s[k], other = s[k === 'route' ? 'cross' : 'route'], sig = signal(phase, k), target = P[k + 'Speed'] / 3.6;
     if (sig === 'VERDE') car.goOnYellow = false;
     // Conductor ante amarillo/rojo
-    if (P.autoBrake && car.x > 0 && car.v > 0.1 && sig !== 'VERDE' && car.brakeAt === null && !car.braking && !car.goOnYellow) {
+    if (P[k + 'Obeys'] && car.x > 0 && car.v > 0.1 && sig !== 'VERDE' && car.brakeAt === null && !car.braking && !car.goOnYellow) {
       const need = stopNeed(car);
-      if (sig === 'AMARILLO' && car.x < need - 1) { car.goOnYellow = true; log('Decisión', `${LONG[k]} ve el amarillo muy cerca y decide seguir.`); }
+      if (noBrakes(k)) { if (!car.noBrakeLogged) { car.noBrakeLogged = true; log('Sin frenos', `${LONG[k]} ve el ${sig.toLowerCase()} e intenta frenar… ¡pero no tiene frenos!`, 'danger'); } }
+      else if (sig === 'AMARILLO' && car.x < need - 1) { car.goOnYellow = true; log('Decisión', `${LONG[k]} ve el amarillo muy cerca y decide seguir.`); }
       else if (car.x <= need + 3) { brakeFor(car, 'signal'); log('Frenado', `${LONG[k]} ve el ${sig.toLowerCase()} y va a frenar (reacción ${fmt(P[k + 'Reaction'])} s).`); }
     }
     if (car.brakeAt !== null && s.t >= car.brakeAt - 1e-8) { car.braking = true; car.brakeAt = null; }
@@ -618,7 +625,7 @@ function tick(dt) {
     if (car.braking && car.reason === 'signal' && sig === 'VERDE') { release(car); log('Arranque', `${LONG[k]} tiene verde y arranca.`, 'ok'); }
     if (car.braking && car.reason === 'sai' && (other.x < -(BOX + other.len) || (other.v < 0.05 && !inBox(other)))) {
       // Si mientras tanto su semáforo pasó a rojo/amarillo, se queda esperando el verde.
-      if (P.autoBrake && sig !== 'VERDE' && car.x > 0) car.reason = 'signal';
+      if (P[k + 'Obeys'] && sig !== 'VERDE' && car.x > 0) car.reason = 'signal';
       else { release(car); log('Arranque', `${LONG[k]} ve la esquina libre y sigue.`, 'ok'); }
     }
     // Movimiento
@@ -663,7 +670,8 @@ function tick(dt) {
   }
   if (s.respPending && s.t >= s.respPending.at - 1e-8) {
     const car = s[s.respPending.k];
-    if (car.v > 0.05 && !car.crossed) { brakeFor(car, 'sai', true); s.respAt = s.t; s.respKey = car.k; log('Frena por el SAI', `${LONG[car.k]} empieza a frenar gracias al aviso.`, 'ok'); }
+    if (noBrakes(car.k)) log('Sin frenos', `${LONG[car.k]} ve el aviso e intenta frenar, pero no tiene frenos.`, 'danger');
+    else if (car.v > 0.05 && !car.crossed) { brakeFor(car, 'sai', true); s.respAt = s.t; s.respKey = car.k; log('Frena por el SAI', `${LONG[car.k]} empieza a frenar gracias al aviso.`, 'ok'); }
     s.respPending = null;
   }
   if (s.warnActive) {
@@ -690,6 +698,7 @@ function finish() {
   const items = [];
   for (const k of ['route', 'cross']) {
     const c = s[k];
+    if (noBrakes(k)) items.push(`<b>${LONG[k]} no tenía frenos.</b>`);
     if (c.firstStopX !== null) items.push(`${LONG[k]} se detuvo a ${fmt(c.firstStopX)} m de la línea${c.crossSig ? ` y luego cruzó con ${c.crossSig.toLowerCase()}` : ''}.`);
     else if (c.crossSig === 'ROJO') items.push(`<b>${LONG[k]} cruzó en rojo</b> a ${fmt(firstCrossSpeed(k), 0)} km/h.`);
     else if (c.crossSig) items.push(`${LONG[k]} cruzó con ${c.crossSig.toLowerCase()}.`);
@@ -704,7 +713,7 @@ function finish() {
   if (s.conflict) { level = 'danger'; title = '💥 Posible choque'; items.unshift(`Los dos vehículos coincidieron dentro de la esquina a los ${fmt(s.conflictAt)} s.`); }
   else if (red) { level = 'warn'; title = s.respAt !== null ? '🛡️ Hubo un cruce en rojo, pero el SAI evitó el choque' : '⚠️ Hubo un cruce en rojo, sin choque'; }
   const tip = s.conflict ? (P.saiResponse === 'off' ? 'Probá activar la respuesta al aviso en “Sistema SAI”, o bajá la velocidad de A.' : 'Probá bajar la reacción ante el aviso de B o aumentar la distancia de la cámara.')
-    : red ? 'Probá bajar la velocidad de A para ver si llega a frenar.' : 'Probá subir la velocidad de A o apagar “Los conductores respetan el semáforo”.';
+    : red ? 'Probá bajar la velocidad de A para ver si llega a frenar.' : 'Probá subir la velocidad de A, apagar “Respeta el semáforo” o poner su frenado en 0 (sin frenos).';
   items.push(`<span style="color:var(--text-3)">💡 ${tip}</span>`);
   const r = $('result');
   r.className = 'card result ' + level; r.hidden = false;
@@ -923,6 +932,7 @@ function carState(car, sig) {
   if (car.cleared) return car.crossSig === 'ROJO' ? 'Ya pasó (cruzó en rojo)' : 'Ya pasó la esquina';
   if (car.x <= 0) return car.v < 0.05 ? 'Detenido dentro de la esquina' : 'Cruzando la esquina';
   if (car.v < 0.05) return sig === 'VERDE' ? 'Arrancando' : `Esperando el verde a ${fmt(car.x)} m`;
+  if (noBrakes(car.k) && car.v > 0.05) return '🚫 Sin frenos: no puede detenerse';
   if (car.braking) return car.reason === 'sai' ? 'Frenando por el aviso SAI' : 'Frenando';
   if (car.brakeAt !== null) return `Por frenar (reacciona en ${fmt(car.brakeAt - state.t)} s)`;
   if (car.goOnYellow) return 'Sigue con amarillo';
@@ -949,13 +959,13 @@ function render(force) {
     $(k + 'State').textContent = carState(car, sig);
     const need = stopNeed(car), bar = $(k + 'Bar'), ver = $(k + 'Verdict');
     $(k + 'X').textContent = car.x > 0 ? fmt(car.x, 0) + ' m' : 'pasó';
-    $(k + 'Need').textContent = car.v > 0.05 ? fmt(need, 0) + ' m' : '0 m';
+    $(k + 'Need').textContent = !Number.isFinite(need) ? 'imposible' : car.v > 0.05 ? fmt(need, 0) + ' m' : '0 m';
     if (car.x > 0 && !car.crossed) {
       const ok = need <= car.x;
       bar.className = 'bar' + (ok ? '' : ' bad');
       bar.querySelector('i').style.width = Math.min(100, need / car.x * 100) + '%';
       ver.className = 'verdict ' + (car.v < 0.05 ? 'neutral' : ok ? 'good' : 'bad');
-      ver.textContent = car.v < 0.05 ? 'Detenido' : ok ? '✓ Si frena ahora, se detiene antes de la línea' : '✗ Aunque frene ahora, no llega a detenerse';
+      ver.textContent = car.v < 0.05 ? 'Detenido' : ok ? '✓ Si frena ahora, se detiene antes de la línea' : !Number.isFinite(need) ? '✗ No tiene frenos: no puede detenerse' : '✗ Aunque frene ahora, no llega a detenerse';
     } else { bar.className = 'bar'; bar.querySelector('i').style.width = '0%'; ver.className = 'verdict neutral'; ver.textContent = 'Ya pasó la línea'; }
     $(k + 'Eta').textContent = car.x <= 0 ? 'Ya pasó' : car.v > 0.1 ? fmt(car.x / car.v) + ' s' : 'Detenido';
     $(k + 'Light').textContent = `${fmt(timeToChange(k))} s`;
@@ -997,7 +1007,7 @@ function renderBrakeTable() {
   const rows = [];
   for (let v = 20; v <= 140; v += 10) {
     const ms = v / 3.6, ra = P.routeReaction, ba = P.routeBrake, rb = P.crossReaction, bb = P.crossBrake;
-    rows.push(`<tr class="${v === cur ? 'hl' : ''}"><td><b>${v} km/h</b></td><td>${fmt(ms * ra, 0)} m</td><td>${fmt(ms * ms / (2 * ba), 0)} m</td><td><b>${fmt(theoryStop(v, ra, ba), 0)} m</b></td><td>${fmt(ms * rb, 0)} m</td><td>${fmt(ms * ms / (2 * bb), 0)} m</td><td><b>${fmt(theoryStop(v, rb, bb), 0)} m</b></td></tr>`);
+    rows.push(`<tr class="${v === cur ? 'hl' : ''}"><td><b>${v} km/h</b></td><td>${fmt(ms * ra, 0)} m</td><td>${ba <= 0 ? '—' : fmt(ms * ms / (2 * ba), 0) + ' m'}</td><td><b>${ba <= 0 ? 'sin frenos' : fmt(theoryStop(v, ra, ba), 0) + ' m'}</b></td><td>${fmt(ms * rb, 0)} m</td><td>${bb <= 0 ? '—' : fmt(ms * ms / (2 * bb), 0) + ' m'}</td><td><b>${bb <= 0 ? 'sin frenos' : fmt(theoryStop(v, rb, bb), 0) + ' m'}</b></td></tr>`);
   }
   $('brakeBody').innerHTML = rows.join('');
 }
@@ -1030,7 +1040,7 @@ $('speedSeg').addEventListener('click', e => { const b = e.target.closest('butto
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-brake],[data-go]'); if (!b) return;
   const car = state[b.dataset.brake || b.dataset.go];
-  if (b.dataset.brake) { brakeFor(car, 'manual', true); log('Frenado manual', `Frenaste a ${LONG[car.k]}.`, 'warn'); }
+  if (b.dataset.brake) { if (noBrakes(car.k)) { toast(`${LONG[car.k]} no tiene frenos (fuerza de frenado en 0).`); return; } brakeFor(car, 'manual', true); log('Frenado manual', `Frenaste a ${LONG[car.k]}.`, 'warn'); }
   else { release(car); log('Control', `Soltaste el freno de ${LONG[car.k]}.`); }
   render(true);
 });
